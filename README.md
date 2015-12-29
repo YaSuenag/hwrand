@@ -18,11 +18,12 @@ NIST SP 800-90A～Cは [JEP 273: DRBG-Based SecureRandom Implementations](http:/
 
 # 利用方法
 
-* RDRAND（NIST SP 800-90A）
- * [SecureRandom#getInstance(String)](http://docs.oracle.com/javase/jp/8/docs/api/java/security/SecureRandom.html#getInstance-java.lang.String-) で ```"X86RDRand"``` を引数にインスタンスを取得してください。
-* RDSEED（NIST SP 800-90B/C）
- * ```SecureRandom#getInstance()``` で ```"X86RDSEED"``` を引数にインスタンスを取得してください。
-具体的な利用方法については、ソース中の ```test/Test.java``` もご覧ください。
+* [SecureRandom#getInstance(String)](http://docs.oracle.com/javase/jp/8/docs/api/java/security/SecureRandom.html#getInstance-java.lang.String-) にそれぞれの引数を与えてインスタンスを取得してください。
+ * RDRAND（NIST SP 800-90A）
+   * X86RDRand
+ * RDSEED（NIST SP 800-90B/C）
+   * X86RDRand
+* 具体的な利用方法については、ソース中の ```test/Test.java``` もご覧ください。
 
 # 実行前の準備
 ```jp.dip.ysfactory.hwrand.x86.HWRandX86Provider``` を ```java.security``` の ```security.provider.<番号>``` に設定します。
@@ -39,9 +40,9 @@ OracleJDK 8u66付属の ```java.security``` に対する変更例として ```di
 
 * HWRandは、実行されるプロセッサがRDRAND、RDSEEDをサポートするか判断し、未サポートのCPUの上では当該機能が利用できません。
  * RDRAND（NIST SP 800-90A）
-  * Ivy Bridge以降
+   * Ivy Bridge以降
  * RDSEED（NIST SP 800-90B/C）
-  * Broadwell以降
+   * Broadwell以降
 * 作者の手持ちの環境の関係上、動作チェックはRDRANDのみしか行えていません。
 * 実装は [SecureRandomSpi](http://docs.oracle.com/javase/jp/8/docs/api/java/security/SecureRandomSpi.html) に対して行っていますが、engineGenerateSeed()とengineNextBytes()は同じ挙動（同じソースからの乱数取得）となります。また、engineSetSeed()は何も行いません（空実装です）。
 
