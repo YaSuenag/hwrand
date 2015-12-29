@@ -33,7 +33,7 @@ public class HWRandX86Provider extends Provider{
     }
 
     if(isSupportedRDSEED()){
-      put("SecureRandom.X86RdRand", "jp.dip.ysfactory.hwrand.x86.RdSeed");
+      put("SecureRandom.X86RdSeed", "jp.dip.ysfactory.hwrand.x86.RdSeed");
     }
 
   }
