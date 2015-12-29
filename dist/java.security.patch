@@ -1,0 +1,10 @@
+--- java.security	2015-12-28 15:27:04.074958990 +0900
++++ java.security.hwrand	2015-12-28 23:01:01.297851861 +0900
+@@ -74,6 +74,7 @@
+ security.provider.7=com.sun.security.sasl.Provider
+ security.provider.8=org.jcp.xml.dsig.internal.dom.XMLDSigRI
+ security.provider.9=sun.security.smartcardio.SunPCSC
++security.provider.10=jp.dip.ysfactory.hwrand.x86.HWRandX86Provider
+ 
+ #
+ # Sun Provider SecureRandom seed source.
