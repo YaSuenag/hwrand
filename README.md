@@ -20,9 +20,9 @@ NIST SP 800-90A～Cは [JEP 273: DRBG-Based SecureRandom Implementations](http:/
 
 * [SecureRandom#getInstance(String)](http://docs.oracle.com/javase/jp/8/docs/api/java/security/SecureRandom.html#getInstance-java.lang.String-) にそれぞれの引数を与えてインスタンスを取得してください。
  * RDRAND（NIST SP 800-90A）
-   * X86RDRand
+   * X86RdRand
  * RDSEED（NIST SP 800-90B/C）
-   * X86RDRand
+   * X86RdSeed
 * 具体的な利用方法については、ソース中の ```test/Test.java``` もご覧ください。
 
 # 実行前の準備
