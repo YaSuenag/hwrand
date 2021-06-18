@@ -1,21 +1,26 @@
 .PHONY: clean
 
 CC = gcc
+AS = as
 CFLAGS   = -fPIC -g -O3
 CPPFLAGS = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
+ASFLAGS = -g -c --noexecstack
 LDFLAGS  = -Wl,-z,noexecstack
 
-all: libhwrandx86.so
+TARGET = libhwrandx86.so
+OBJS   = hwrand.o random.o
 
-libhwrandx86.so: hwrand.o random.o
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
 	$(CC) -shared -o $@ $^ $(LDFLAGS)
 
 .S.o:
-	$(CC) $(CFLAGS) -c $<
+	$(AS) $(ASFLAGS) $< -o $@
 
 .c.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 clean:
-	$(RM) libhwrandx86.so *.o
+	$(RM) $(TARGET) $(OBJS)
 
