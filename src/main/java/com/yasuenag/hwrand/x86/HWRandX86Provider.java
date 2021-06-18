@@ -5,8 +5,8 @@ import java.security.*;
 
 public class HWRandX86Provider extends Provider{
 
+  // These fields will be written from native code
   private static boolean supportedRDRAND;
-
   private static boolean supportedRDSEED;
 
   public static boolean isSupportedRDRAND(){
@@ -36,6 +36,7 @@ public class HWRandX86Provider extends Provider{
       put("SecureRandom.X86RdSeed", "com.yasuenag.hwrand.x86.RdSeed");
     }
 
+    setProperty("SecureRandom.X86RdRand ThreadSafe", "true");
   }
 
 }
