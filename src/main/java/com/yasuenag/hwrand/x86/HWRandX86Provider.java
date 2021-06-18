@@ -1,4 +1,4 @@
-package jp.dip.ysfactory.hwrand.x86;
+package com.yasuenag.hwrand.x86;
 
 import java.security.*;
 
@@ -29,11 +29,11 @@ public class HWRandX86Provider extends Provider{
               "Wrapper for RDRAND and RDSEED instructions in x86 processors.");
 
     if(isSupportedRDRAND()){
-      put("SecureRandom.X86RdRand", "jp.dip.ysfactory.hwrand.x86.RdRand");
+      put("SecureRandom.X86RdRand", "com.yasuenag.hwrand.x86.RdRand");
     }
 
     if(isSupportedRDSEED()){
-      put("SecureRandom.X86RdSeed", "jp.dip.ysfactory.hwrand.x86.RdSeed");
+      put("SecureRandom.X86RdSeed", "com.yasuenag.hwrand.x86.RdSeed");
     }
 
   }

@@ -9,12 +9,12 @@ void fill_with_rdseed(unsigned char data[], int len);
 
 
 /*
- * Class:     jp_dip_ysfactory_hwrand_x86_HWRandX86Provider
+ * Class:     com_yasuenag_hwrand_x86_HWRandX86Provider
  * Method:    checkCPUFeatures
  * Signature: ()V
  */
 JNIEXPORT void JNICALL
-      Java_jp_dip_ysfactory_hwrand_x86_HWRandX86Provider_checkCPUFeatures
+      Java_com_yasuenag_hwrand_x86_HWRandX86Provider_checkCPUFeatures
                                                      (JNIEnv *env, jclass cls){
   int ebx, ecx;
   jfieldID rdrandFieldID, rdseedFieldID;
@@ -45,11 +45,11 @@ JNIEXPORT void JNICALL
 }
 
 /*
- * Class:     jp_dip_ysfactory_hwrand_x86_RdRand
+ * Class:     com_yasuenag_hwrand_x86_RdRand
  * Method:    engineNextBytes
  * Signature: ([B)V
  */
-JNIEXPORT void JNICALL Java_jp_dip_ysfactory_hwrand_x86_RdRand_engineNextBytes
+JNIEXPORT void JNICALL Java_com_yasuenag_hwrand_x86_RdRand_engineNextBytes
                                    (JNIEnv *env, jobject obj, jbyteArray bytes){
   jint length;
   jbyte *native_bytes;
@@ -74,11 +74,11 @@ JNIEXPORT void JNICALL Java_jp_dip_ysfactory_hwrand_x86_RdRand_engineNextBytes
 }
 
 /*
- * Class:     jp_dip_ysfactory_hwrand_x86_RdSeed
+ * Class:     com_yasuenag_hwrand_x86_RdSeed
  * Method:    engineNextBytes
  * Signature: ([B)V
  */
-JNIEXPORT void JNICALL Java_jp_dip_ysfactory_hwrand_x86_RdSeed_engineNextBytes
+JNIEXPORT void JNICALL Java_com_yasuenag_hwrand_x86_RdSeed_engineNextBytes
                                    (JNIEnv *env, jobject obj, jbyteArray bytes){
   jint length;
   jbyte *native_bytes;

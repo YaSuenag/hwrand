@@ -1,9 +1,9 @@
-package jp.dip.ysfactory.hwrand.x86;
+package com.yasuenag.hwrand.x86;
 
 import java.security.*;
 
 
-public class RdSeed extends SecureRandomSpi{
+public class RdRand extends SecureRandomSpi{
 
   @Override
   protected byte[] engineGenerateSeed(int numBytes){
