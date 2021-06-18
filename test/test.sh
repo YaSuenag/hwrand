@@ -1,7 +1,7 @@
 #!/bin/sh
 
 DISTDIR=../dist
+export CLASSPATH=.:$DISTDIR/hwrand.jar
+
 $JAVA_HOME/bin/javac Test.java
-$JAVA_HOME/bin/java -cp .:$DISTDIR/hwrand.jar \
-                    -Djava.library.path=$DISTDIR \
-                    -Djava.security.properties==$DISTDIR/java.security Test
+$JAVA_HOME/bin/java -Djava.library.path=$DISTDIR Test

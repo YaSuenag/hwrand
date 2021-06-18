@@ -1,5 +1,7 @@
 import java.security.*;
 
+import com.yasuenag.hwrand.x86.*;
+
 
 public class Test{
 
@@ -18,6 +20,7 @@ public class Test{
   }
 
   public static void main(String[] args) throws Exception{
+    Security.addProvider(new HWRandX86Provider());
     processRandom("X86RdRand");
     processRandom("X86RdSeed");
   }
