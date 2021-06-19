@@ -33,6 +33,7 @@ public class HWRandX86Provider extends Provider{
     // This code should support JDK 6 or later.
     Map<String, String> attrs = new HashMap<String, String>();
     attrs.put("ThreadSafe", "true");
+    attrs.put("ImplementedIn", "Hardware");
 
     if(isSupportedRDRAND()){
       putService(new Provider.Service(this, "SecureRandom", "X86RdRand",
