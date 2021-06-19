@@ -1,6 +1,7 @@
 package com.yasuenag.hwrand.x86;
 
 import java.security.*;
+import java.util.*;
 
 
 public class HWRandX86Provider extends Provider{
@@ -25,18 +26,24 @@ public class HWRandX86Provider extends Provider{
   }
 
   public HWRandX86Provider(){
-    super("HWRandX86", 0.1d,
-              "Wrapper for RDRAND and RDSEED instructions in x86 processors.");
+    // This c'tor has been deprecated since JDK 9.
+    super("HWRandX86", 0.2d,
+          "Wrapper for RDRAND and RDSEED instructions in x86 processors.");
+
+    // This code should support JDK 6 or later.
+    Map<String, String> attrs = new HashMap<String, String>();
+    attrs.put("ThreadSafe", "true");
 
     if(isSupportedRDRAND()){
-      put("SecureRandom.X86RdRand", "com.yasuenag.hwrand.x86.RdRand");
+      putService(new Provider.Service(this, "SecureRandom", "X86RdRand",
+                                      RdRand.class.getName(), null, attrs));
     }
 
     if(isSupportedRDSEED()){
-      put("SecureRandom.X86RdSeed", "com.yasuenag.hwrand.x86.RdSeed");
+      putService(new Provider.Service(this, "SecureRandom", "X86RdSeed",
+                                      RdSeed.class.getName(), null, attrs));
     }
 
-    setProperty("SecureRandom.X86RdRand ThreadSafe", "true");
   }
 
 }

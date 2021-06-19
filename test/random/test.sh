@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DISTDIR=../..//dist
+DISTDIR=../../dist
 export CLASSPATH=.:$DISTDIR/hwrand.jar
 
 $JAVA_HOME/bin/javac Test.java
