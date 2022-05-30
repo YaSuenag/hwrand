@@ -1,4 +1,5 @@
 HWRand
+![CodeQL](workflows/CodeQL/badge.svg)
 ===================
 HWRandはIntelプロセッサのRDRAND、RDSEED命令を用いた乱数生成を行うためのSecureRandom実装です。
 RDRANDはNIST SP 800-90A、RDSEEDはNIST SP 800-90BとCに対応しているようです。
