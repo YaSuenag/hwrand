@@ -1,5 +1,4 @@
 HWRand
-![CodeQL](../../workflows/CodeQL/badge.svg)
 ===================
 HWRandはIntelプロセッサのRDRAND、RDSEED命令を用いた乱数生成を行うためのSecureRandom実装です。
 RDRANDはNIST SP 800-90A、RDSEEDはNIST SP 800-90BとCに対応しているようです。
@@ -9,14 +8,15 @@ NIST SP 800-90A～Cは [JEP 273: DRBG-Based SecureRandom Implementations](http:/
 
 # 対応環境
 
-* JDK 6以降
+* JDK 19
 * Linux x86_64
- * 動作チェックはUbuntu 20.04 (WSL2) x86_64で実施
- * ビルドにはJDK、GCC、GNU Make、GNU Assembler、Maven必須
+    * 動作チェックはUbuntu 22.04 (WSL2) x86_64で実施
 
 # ビルド方法
 
-`JAVA_HOME` 環境変数を設定の上、 `make` を実行します。
+`JAVA_HOME` 環境変数を設定の上、 `mvn package` します。
+
+HWRand は [ffmasm](https://github.com/YaSuenag/ffmasm) に依存しており、Maven で [GitHub Packages](https://github.com/YaSuenag/ffmasm/packages/) からダウンロードします。そのためには settings.xml で PAT を設定する必要があります。 [こちら](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry) を参考に、あらかじめ Maven の設定を行ってください。
 
 # 利用方法
 
@@ -25,8 +25,8 @@ NIST SP 800-90A～Cは [JEP 273: DRBG-Based SecureRandom Implementations](http:/
    * X86RdRand
  * RDSEED（NIST SP 800-90B/C）
    * X86RdSeed
-* 具体的な利用方法については、ソース中の [test/random/Test.java](test/random/Test.java) もご覧ください。
-* `UUID::randomUUID` の `SecureRandom` に適用する場合は [test/uuid](test/uuid) をご覧ください
+* 具体的な利用方法については [test](test) もご覧ください。
+* `UUID::randomUUID` の `SecureRandom` に適用する場合は [test/src/main/java/com/yasuenag/hwrand/test/random/Uuid.java](test/src/main/java/com/yasuenag/hwrand/test/random/Uuid.java) をご覧ください
 
 # 実行前の準備
 
@@ -36,8 +36,9 @@ OracleJDK 8u66付属の `java.security` に対する変更例として `dist/jav
 # 実行
 
 * 普通にJavaプログラムを実行します。
-* クラスパスに `hwrand.jar` を追加します。
-* `libhwrandx86.so` の含まれるディレクトリが `LD_LIBRARY_PATH` に通っていない場合、 `-Djava.library.path` でディレクトリを指定します。
+* モジュールパスに `hwrand-<バージョン>.jar` と、HWRand が依存する `ffmasm-<バージョン>.jar` を設定します。
+* JDK 19 のプレビュー機能を使用しているため、 `--enable-preview` も付与します。
+* ネイティブアクセスの警告メッセージを消したい場合は `--enable-native-access=com.yasuenag.ffmasm` も付与します。
 * もし `$JAVA_HOME/jre/lib/security/java.security` 以外にHWRandの設定を組み込んだ場合、そのセキュリティ設定ファイルを `-Djava.security.properties` で指定します。
 
 # 注意

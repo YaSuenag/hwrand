@@ -4,29 +4,26 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.yasuenag</groupId>
-    <artifactId>hwrand</artifactId>
-    <version>0.2.0</version>
+    <artifactId>random</artifactId>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
+
+    <name>random</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <moduleName>com.yasuenag.hwrand.test</moduleName>
+        <mainClass>com.yasuenag.hwrand.test.random.Test</mainClass>
         <imageName>${project.artifactId}-${project.version}</imageName>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/YaSuenag/ffmasm</url>
-        </repository>
-    </repositories>
     
     <dependencies>
         <dependency>
             <groupId>com.yasuenag</groupId>
-            <artifactId>ffmasm</artifactId>
-            <version>0.1.1</version>
+            <artifactId>hwrand</artifactId>
+            <version>0.2.0</version>
         </dependency>
     </dependencies>
 
@@ -41,6 +38,23 @@
                         <arg>-Xlint:all</arg>
                     </compilerArgs>
                     <enablePreview>true</enablePreview>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <executable>${java.home}/bin/java</executable>
+                    <arguments>
+                        <argument>--module-path</argument>
+                        <modulepath/>
+                        <argument>--enable-preview</argument>
+                        <argument>--enable-native-access=com.yasuenag.ffmasm</argument>
+                        <argument>--module</argument>
+                        <argument>${moduleName}/${mainClass}</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>

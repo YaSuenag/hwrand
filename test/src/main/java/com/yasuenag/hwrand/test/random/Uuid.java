@@ -1,7 +1,9 @@
+package com.yasuenag.hwrand.test.random;
+
 import java.util.*;
 import java.util.concurrent.*;
 
-public class Test implements Callable<Set<UUID>>{
+public class Uuid implements Callable<Set<UUID>>{
 
   private final static int NUM_OF_SETS    = 100_000;
   private final static int NUM_OF_THREADS = 100;
@@ -20,7 +22,7 @@ public class Test implements Callable<Set<UUID>>{
   public static void main(String[] args) throws Exception{
     List<Callable<Set<UUID>>> tasks = new ArrayList<>();
     for(int i = 0; i < NUM_OF_THREADS; i++){
-      tasks.add(new Test());
+      tasks.add(new Uuid());
     }
 
     var uuids = new HashSet<UUID>();
