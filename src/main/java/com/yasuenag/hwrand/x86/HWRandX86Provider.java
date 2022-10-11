@@ -29,6 +29,22 @@ public class HWRandX86Provider extends Provider{
   private static MethodHandle fillWithRDSEED;
 
   private static void assembleCodes() throws UnsupportedPlatformException{
+    Register arg1, arg2, arg3;
+    String osName = System.getProperty("os.name");
+    if(osName.equals("Linux")){
+      arg1 = Register.RDI;
+      arg2 = Register.RSI;
+      arg3 = Register.RDX;
+    }
+    else if(osName.startsWith("Windows")){
+      arg1 = Register.RCX;
+      arg2 = Register.RDX;
+      arg3 = Register.R8;
+    }
+    else{
+      throw new UnsupportedPlatformException("Unsupported OS: " + osName);
+    }
+
     /* CPUID */
     var cpuidDesc = FunctionDescriptor.ofVoid(
                   ValueLayout.JAVA_INT, // 1st argument (EAX)
@@ -36,20 +52,20 @@ public class HWRandX86Provider extends Provider{
                   ValueLayout.ADDRESS   // 3rd argument (result)
                 );
     cpuid = AMD64AsmBuilder.create(codeSegment, cpuidDesc)
-   /* push %rbp         */ .push(Register.RBP)
-   /* mov %rsp, %rbp    */ .movRM(Register.RSP, Register.RBP, OptionalInt.empty())
-   /* push %rbx         */ .push(Register.RBX)
-   /* mov %rdi, %rax    */ .movRM(Register.RDI, Register.RAX, OptionalInt.empty())
-   /* mov %rsi, %rcx    */ .movRM(Register.RSI, Register.RCX, OptionalInt.empty())
-   /* mov %rdx, %r8     */ .movRM(Register.RDX, Register.R8, OptionalInt.empty())
-   /* cpuid             */ .cpuid()
-   /* mov %eax, (%r8)   */ .movRM(Register.EAX, Register.R8, OptionalInt.of(0))
-   /* mov %ebx, 4(%r8)  */ .movRM(Register.EBX, Register.R8, OptionalInt.of(4))
-   /* mov %ecx, 8(%r8)  */ .movRM(Register.ECX, Register.R8, OptionalInt.of(8))
-   /* mov %ecx, 12(%r8) */ .movRM(Register.EDX, Register.R8, OptionalInt.of(12))
-   /* pop %rbx          */ .pop(Register.RBX, OptionalInt.empty())
-   /* leave             */ .leave()
-   /* ret               */ .ret()
+  /* push %rbp          */ .push(Register.RBP)
+  /* mov %rsp, %rbp     */ .movRM(Register.RSP, Register.RBP, OptionalInt.empty())
+  /* push %rbx          */ .push(Register.RBX)
+  /* mov <arg1>, %rax   */ .movRM(arg1, Register.RAX, OptionalInt.empty())
+  /* mov <arg2>, %rcx   */ .movRM(arg2, Register.RCX, OptionalInt.empty())
+  /* mov <arg3>, %r11   */ .movRM(arg3, Register.R11, OptionalInt.empty())
+  /* cpuid              */ .cpuid()
+  /* mov %eax, (%r11)   */ .movRM(Register.EAX, Register.R11, OptionalInt.of(0))
+  /* mov %ebx, 4(%r11)  */ .movRM(Register.EBX, Register.R11, OptionalInt.of(4))
+  /* mov %ecx, 8(%r11)  */ .movRM(Register.ECX, Register.R11, OptionalInt.of(8))
+  /* mov %edx, 12(%r11) */ .movRM(Register.EDX, Register.R11, OptionalInt.of(12))
+  /* pop %rbx           */ .pop(Register.RBX, OptionalInt.empty())
+  /* leave              */ .leave()
+  /* ret                */ .ret()
                            .build();
 
     /* RDRAND */
@@ -58,33 +74,33 @@ public class HWRandX86Provider extends Provider{
                   ValueLayout.JAVA_INT // 2nd argument (length)
                 );
     fillWithRDRAND = AMD64AsmBuilder.create(codeSegment, rdrandDesc)
-           /*   push %rbp        */ .push(Register.RBP)
-           /*   mov %rsp, %rbp   */ .movRM(Register.RSP, Register.RBP, OptionalInt.empty())
-           /* .align 16          */ .alignTo16BytesWithNOP()
-           /* bulk:              */ .label("bulk")
-           /*   cmp $8, %rsi     */ .cmp(Register.RSI, 8, OptionalInt.empty())
-           /*   jl last_call     */ .jl("last_call")
-           /* retry:             */ .label("retry")
-           /*   rdrand %rax      */ .rdrand(Register.RAX)
-           /*   jae retry        */ .jae("retry")
-           /*   mov %rax, (%rdi) */ .movRM(Register.RAX, Register.RDI, OptionalInt.of(0))
-           /*   add $8, %rdi     */ .add(Register.RDI, 8, OptionalInt.empty())
-           /*   sub $8, %rsi     */ .sub(Register.RSI, 8, OptionalInt.empty())
-           /*   jne bulk         */ .jne("bulk")
-           /*   je exit          */ .je("exit")
-           /* last_call:         */ .label("last_call")
-           /*   rdrand %rax      */ .rdrand(Register.RAX)
-           /*   jae last_call    */ .jae("last_call")
-           /* .align 16          */ .alignTo16BytesWithNOP()
-           /* proc1byte:         */ .label("proc1byte")
-           /*   mov %al, (%rdi)  */ .movRM(Register.AL, Register.RDI, OptionalInt.of(0))
-           /*   add $1, %rdi     */ .add(Register.RDI, 1, OptionalInt.empty())
-           /*   shl $1, %rax     */ .shl(Register.RAX, (byte)1, OptionalInt.empty())
-           /*   sub $1, %rsi     */ .sub(Register.RSI, 1, OptionalInt.empty())
-           /*   jne proc1byte    */ .jne("proc1byte")
-           /* exit:              */ .label("exit")
-           /*   leave            */ .leave()
-           /*   ret              */ .ret()
+         /*   push %rbp          */ .push(Register.RBP)
+         /*   mov %rsp, %rbp     */ .movRM(Register.RSP, Register.RBP, OptionalInt.empty())
+         /* .align 16            */ .alignTo16BytesWithNOP()
+         /* bulk:                */ .label("bulk")
+         /*   cmp $8, <arg2>     */ .cmp(arg2, 8, OptionalInt.empty())
+         /*   jl last_call       */ .jl("last_call")
+         /* retry:               */ .label("retry")
+         /*   rdrand %rax        */ .rdrand(Register.RAX)
+         /*   jae retry          */ .jae("retry")
+         /*   mov %rax, (<arg1>) */ .movRM(Register.RAX, arg1, OptionalInt.of(0))
+         /*   add $8, <arg1>     */ .add(arg1, 8, OptionalInt.empty())
+         /*   sub $8, <arg2>     */ .sub(arg2, 8, OptionalInt.empty())
+         /*   jne bulk           */ .jne("bulk")
+         /*   je exit            */ .je("exit")
+         /* last_call:           */ .label("last_call")
+         /*   rdrand %rax        */ .rdrand(Register.RAX)
+         /*   jae last_call      */ .jae("last_call")
+         /* .align 16            */ .alignTo16BytesWithNOP()
+         /* proc1byte:           */ .label("proc1byte")
+         /*   mov %al, (<arg1>)  */ .movRM(Register.AL, arg1, OptionalInt.of(0))
+         /*   add $1, <arg1>     */ .add(arg1, 1, OptionalInt.empty())
+         /*   shl $1, %rax       */ .shl(Register.RAX, (byte)1, OptionalInt.empty())
+         /*   sub $1, <arg2>     */ .sub(arg2, 1, OptionalInt.empty())
+         /*   jne proc1byte      */ .jne("proc1byte")
+         /* exit:                */ .label("exit")
+         /*   leave              */ .leave()
+         /*   ret                */ .ret()
                                     .build();
 
     /* RDSEED */
@@ -93,33 +109,33 @@ public class HWRandX86Provider extends Provider{
                   ValueLayout.JAVA_INT // 2nd argument (length)
                 );
     fillWithRDSEED = AMD64AsmBuilder.create(codeSegment, rdseedDesc)
-           /*   push %rbp        */ .push(Register.RBP)
-           /*   mov %rsp, %rbp   */ .movRM(Register.RSP, Register.RBP, OptionalInt.empty())
-           /* .align 16          */ .alignTo16BytesWithNOP()
-           /* bulk:              */ .label("bulk")
-           /*   cmp $8, %rsi     */ .cmp(Register.RSI, 8, OptionalInt.empty())
-           /*   jl last_call     */ .jl("last_call")
-           /* retry:             */ .label("retry")
-           /*   rdseed %rax      */ .rdseed(Register.RAX)
-           /*   jae retry        */ .jae("retry")
-           /*   mov %rax, (%rdi) */ .movRM(Register.RAX, Register.RDI, OptionalInt.of(0))
-           /*   add $8, %rdi     */ .add(Register.RDI, 8, OptionalInt.empty())
-           /*   sub $8, %rsi     */ .sub(Register.RSI, 8, OptionalInt.empty())
-           /*   jne bulk         */ .jne("bulk")
-           /*   je exit          */ .je("exit")
-           /* last_call:         */ .label("last_call")
-           /*   rdseed %rax      */ .rdseed(Register.RAX)
-           /*   jae last_call    */ .jae("last_call")
-           /* .align 16          */ .alignTo16BytesWithNOP()
-           /* proc1byte:         */ .label("proc1byte")
-           /*   mov %ah, (%rdi)  */ .movRM(Register.AH, Register.RDI, OptionalInt.of(0))
-           /*   add $1, %rdi     */ .add(Register.RDI, 1, OptionalInt.empty())
-           /*   shl $1, %rax     */ .shl(Register.RAX, (byte)1, OptionalInt.empty())
-           /*   sub $1, %rsi     */ .sub(Register.RSI, 1, OptionalInt.empty())
-           /*   jne proc1byte    */ .jne("proc1byte")
-           /* exit:              */ .label("exit")
-           /*   leave            */ .leave()
-           /*   ret              */ .ret()
+         /*   push %rbp          */ .push(Register.RBP)
+         /*   mov %rsp, %rbp     */ .movRM(Register.RSP, Register.RBP, OptionalInt.empty())
+         /* .align 16            */ .alignTo16BytesWithNOP()
+         /* bulk:                */ .label("bulk")
+         /*   cmp $8, <arg2>     */ .cmp(arg2, 8, OptionalInt.empty())
+         /*   jl last_call       */ .jl("last_call")
+         /* retry:               */ .label("retry")
+         /*   rdseed %rax        */ .rdseed(Register.RAX)
+         /*   jae retry          */ .jae("retry")
+         /*   mov %rax, (<arg1>) */ .movRM(Register.RAX, arg1, OptionalInt.of(0))
+         /*   add $8, <arg1>     */ .add(arg1, 8, OptionalInt.empty())
+         /*   sub $8, <arg2>     */ .sub(arg2, 8, OptionalInt.empty())
+         /*   jne bulk           */ .jne("bulk")
+         /*   je exit            */ .je("exit")
+         /* last_call:           */ .label("last_call")
+         /*   rdseed %rax        */ .rdseed(Register.RAX)
+         /*   jae last_call      */ .jae("last_call")
+         /* .align 16            */ .alignTo16BytesWithNOP()
+         /* proc1byte:           */ .label("proc1byte")
+         /*   mov %al, (<arg1>)  */ .movRM(Register.AL, arg1, OptionalInt.of(0))
+         /*   add $1, <arg1>     */ .add(arg1, 1, OptionalInt.empty())
+         /*   shl $1, %rax       */ .shl(Register.RAX, (byte)1, OptionalInt.empty())
+         /*   sub $1, <arg2>     */ .sub(arg2, 1, OptionalInt.empty())
+         /*   jne proc1byte      */ .jne("proc1byte")
+         /* exit:                */ .label("exit")
+         /*   leave              */ .leave()
+         /*   ret                */ .ret()
                                     .build();
   }
 
