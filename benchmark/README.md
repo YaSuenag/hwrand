@@ -1,10 +1,10 @@
 # HWRandベンチマーク
 
-NativePRNGNonBlocking、DRBG、X86RdRand、X86RdSeedのパフォーマンスをJMHで測定します。シングルスレッド性能と100スレッド同時実行の2パターンを測定します。
+NativePRNG、DRBG、X86RdRand、X86RdSeedのパフォーマンスをJMHで測定します。シングルスレッド性能と100スレッド同時実行の2パターンを測定します。
 
 ## 必要なもの
 
-* JDK 16
+* JDK 19
 * Maven
 * HWRand
     * **maven installされている必要あり**
@@ -13,11 +13,10 @@ NativePRNGNonBlocking、DRBG、X86RdRand、X86RdSeedのパフォーマンスをJ
 ## 動かし方
 
 ```
-$ java -Djava.library.path=<libhwrand.so配置先> -jar target/hwrand-benchmark-1.0.0.jar
+$ java --enable-preview -jar target/hwrand-benchmark-1.1.0.jar
 ```
 
 ## 注意
 
-* Linuxのみで動きます
 * -Xmxで8GB設定しています
 * ベンチマーク内部でEpsilon GCを設定しています
