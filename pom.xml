@@ -53,7 +53,7 @@
                 <executions>
                     <execution>
                         <id>make-jni</id>
-                        <phase>compile</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
@@ -83,5 +83,15 @@
                 </executions>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>native/libhwrandx86.so</include>
+                </includes>
+            </resource>
+        </resources>
+
     </build>
 </project>

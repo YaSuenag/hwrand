@@ -13,7 +13,7 @@ NativePRNGNonBlocking、DRBG、X86RdRand、X86RdSeedのパフォーマンスをJ
 ## 動かし方
 
 ```
-$ java -Djava.library.path=<libhwrand.so配置先> -jar target/hwrand-benchmark-1.0.0.jar
+$ java -jar target/hwrand-benchmark-1.0.0.jar
 ```
 
 ## 注意

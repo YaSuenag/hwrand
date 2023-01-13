@@ -1,7 +1,12 @@
 #!/bin/sh
 
-DISTDIR=../../dist
-export CLASSPATH=.:$DISTDIR/hwrand.jar
+FILE=$0
+JAR=$1
 
-$JAVA_HOME/bin/javac Test.java
-$JAVA_HOME/bin/java -Djava.library.path=$DISTDIR Test
+if [ "x$JAR" = 'x' ]; then
+  echo "Usage: $0 /path/to/hwrand.jar"
+  exit 1
+fi
+
+$JAVA_HOME/bin/javac -cp $JAR Test.java
+$JAVA_HOME/bin/java -cp .:$JAR Test
