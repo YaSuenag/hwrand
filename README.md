@@ -16,7 +16,9 @@ NIST SP 800-90A～Cは [JEP 273: DRBG-Based SecureRandom Implementations](http:/
 
 # ビルド方法
 
-`JAVA_HOME` 環境変数を設定の上、 `make` を実行します。
+```bash
+$ mvn package
+```
 
 # 利用方法
 

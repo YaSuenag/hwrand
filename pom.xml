@@ -46,6 +46,42 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>make-jni</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>make</executable>
+                            <arguments>
+                                <argument>-C</argument>
+                                <argument>src/native</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>make-clean-jni</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>make</executable>
+                            <arguments>
+                                <argument>-C</argument>
+                                <argument>src/native</argument>
+                                <argument>clean</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
