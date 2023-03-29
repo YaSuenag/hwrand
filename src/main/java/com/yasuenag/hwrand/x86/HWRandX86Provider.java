@@ -2,6 +2,7 @@ package com.yasuenag.hwrand.x86;
 
 import java.lang.foreign.FunctionDescriptor;
 import java.lang.foreign.SegmentAllocator;
+import java.lang.foreign.SegmentScope;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.ref.Cleaner;
@@ -51,7 +52,7 @@ public class HWRandX86Provider extends Provider{
                   ValueLayout.JAVA_INT, // 2nd argument (ECX)
                   ValueLayout.ADDRESS   // 3rd argument (result)
                 );
-    cpuid = AMD64AsmBuilder.create(codeSegment, cpuidDesc)
+    cpuid = AMD64AsmBuilder.create(AMD64AsmBuilder.class, codeSegment, cpuidDesc)
   /* push %rbp          */ .push(Register.RBP)
   /* mov %rsp, %rbp     */ .movMR(Register.RSP, Register.RBP, OptionalInt.empty())
   /* push %rbx          */ .push(Register.RBX)
@@ -73,7 +74,7 @@ public class HWRandX86Provider extends Provider{
                   ValueLayout.ADDRESS, // 1st argument (mem)
                   ValueLayout.JAVA_INT // 2nd argument (length)
                 );
-    fillWithRDRAND = AMD64AsmBuilder.create(codeSegment, rdrandDesc)
+    fillWithRDRAND = AMD64AsmBuilder.create(AMD64AsmBuilder.class, codeSegment, rdrandDesc)
          /*   push %rbp          */ .push(Register.RBP)
          /*   mov %rsp, %rbp     */ .movMR(Register.RSP, Register.RBP, OptionalInt.empty())
          /* .align 16            */ .alignTo16BytesWithNOP()
@@ -108,7 +109,7 @@ public class HWRandX86Provider extends Provider{
                   ValueLayout.ADDRESS, // 1st argument (mem)
                   ValueLayout.JAVA_INT // 2nd argument (length)
                 );
-    fillWithRDSEED = AMD64AsmBuilder.create(codeSegment, rdseedDesc)
+    fillWithRDSEED = AMD64AsmBuilder.create(AMD64AsmBuilder.class, codeSegment, rdseedDesc)
          /*   push %rbp          */ .push(Register.RBP)
          /*   mov %rsp, %rbp     */ .movMR(Register.RSP, Register.RBP, OptionalInt.empty())
          /* .align 16            */ .alignTo16BytesWithNOP()
@@ -152,7 +153,7 @@ public class HWRandX86Provider extends Provider{
              });
       assembleCodes();
 
-      var allocator = SegmentAllocator.implicitAllocator();
+      var allocator = SegmentAllocator.nativeAllocator(SegmentScope.auto());
       var mem = allocator.allocateArray(ValueLayout.JAVA_INT, 4);
 
       /* RDRAND check */

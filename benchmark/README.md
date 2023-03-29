@@ -4,7 +4,7 @@ NativePRNG、DRBG、X86RdRand、X86RdSeedのパフォーマンスをJMHで測定
 
 ## 必要なもの
 
-* JDK 19
+* JDK 20
 * Maven
 * HWRand
     * **maven installされている必要あり**

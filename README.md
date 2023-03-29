@@ -8,7 +8,7 @@ NIST SP 800-90A～Cは [JEP 273: DRBG-Based SecureRandom Implementations](http:/
 
 # 対応環境
 
-* JDK 19
+* JDK 20
 * Linux x86_64
     * 動作チェックはUbuntu 22.04 (WSL2) x86_64で実施
 
@@ -37,7 +37,7 @@ OracleJDK 8u66付属の `java.security` に対する変更例として `dist/jav
 
 * 普通にJavaプログラムを実行します。
 * モジュールパスに `hwrand-<バージョン>.jar` と、HWRand が依存する `ffmasm-<バージョン>.jar` を設定します。
-* JDK 19 のプレビュー機能を使用しているため、 `--enable-preview` も付与します。
+* JDK 20 のプレビュー機能を使用しているため、 `--enable-preview` も付与します。
 * ネイティブアクセスの警告メッセージを消したい場合は `--enable-native-access=com.yasuenag.ffmasm` も付与します。
 * もし `$JAVA_HOME/jre/lib/security/java.security` 以外にHWRandの設定を組み込んだ場合、そのセキュリティ設定ファイルを `-Djava.security.properties` で指定します。
 
