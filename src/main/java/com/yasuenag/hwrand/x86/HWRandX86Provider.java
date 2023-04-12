@@ -1,5 +1,6 @@
 package com.yasuenag.hwrand.x86;
 
+import java.lang.foreign.Arena;
 import java.lang.foreign.FunctionDescriptor;
 import java.lang.foreign.SegmentAllocator;
 import java.lang.foreign.SegmentScope;
@@ -20,6 +21,7 @@ import com.yasuenag.ffmasm.amd64.Register;
 public class HWRandX86Provider extends Provider{
 
   private static final CodeSegment codeSegment;
+  private static final SegmentAllocator allocator;
 
   // These fields will be written from native code
   private static final boolean supportedRDRAND;
@@ -142,6 +144,7 @@ public class HWRandX86Provider extends Provider{
 
   static {
     try{
+      allocator = SegmentAllocator.nativeAllocator(SegmentScope.auto());
       codeSegment = new CodeSegment();
       Cleaner.create()
              .register(codeSegment, () -> {
@@ -153,16 +156,17 @@ public class HWRandX86Provider extends Provider{
              });
       assembleCodes();
 
-      var allocator = SegmentAllocator.nativeAllocator(SegmentScope.auto());
-      var mem = allocator.allocateArray(ValueLayout.JAVA_INT, 4);
+      try(var arena = Arena.openConfined()){
+        var mem = arena.allocateArray(ValueLayout.JAVA_INT, 4);
 
-      /* RDRAND check */
-      cpuid.invoke(1, 0, mem);
-      supportedRDRAND = ((mem.getAtIndex(ValueLayout.JAVA_INT, 2) >>> 30) & 1) == 1;
+        /* RDRAND check */
+        cpuid.invoke(1, 0, mem);
+        supportedRDRAND = ((mem.getAtIndex(ValueLayout.JAVA_INT, 2) >>> 30) & 1) == 1;
 
-      /* RDSEED check */
-      cpuid.invoke(7, 0, mem);
-      supportedRDSEED = ((mem.getAtIndex(ValueLayout.JAVA_INT, 1) >>> 18) & 1) == 1;
+        /* RDSEED check */
+        cpuid.invoke(7, 0, mem);
+        supportedRDSEED = ((mem.getAtIndex(ValueLayout.JAVA_INT, 1) >>> 18) & 1) == 1;
+      }
     }
     catch(Throwable t){
       throw new RuntimeException(t);
@@ -187,6 +191,10 @@ public class HWRandX86Provider extends Provider{
 
   static MethodHandle fillWithRDSEED(){
     return fillWithRDSEED;
+  }
+
+  static SegmentAllocator getAllocator(){
+    return allocator;
   }
 
   public HWRandX86Provider(){
