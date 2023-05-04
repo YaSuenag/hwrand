@@ -1,8 +1,8 @@
-name: Publish package
+name: Publish snapshot package
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 concurrency:
   group: snapshot-release
