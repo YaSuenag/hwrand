@@ -1,8 +1,12 @@
 name: Publish package
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
+
+concurrency:
+  group: snapshot-release
+  cancel-in-progress: true
 
 jobs:
   publish:
@@ -22,9 +26,9 @@ jobs:
           cache: 'maven'
 
       - name: 'Run Maven'
-        run: mvn -B -P release package
+        run: mvn -B package
 
       - name: Publish to GitHub Packages Apache Maven
-        run: mvn -B -P release deploy
+        run: mvn -B deploy
         env:
           GITHUB_TOKEN: ${{ github.token }}

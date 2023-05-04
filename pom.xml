@@ -7,17 +7,18 @@
 
     <groupId>com.yasuenag</groupId>
     <artifactId>hwrand</artifactId>
-    <version>0.3.0</version>
     <name>HWRand</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>6</maven.compiler.source>
         <maven.compiler.target>6</maven.compiler.target>
+        <product.version.base>0.3.0</product.version.base>
     </properties>
 
+    <version>${product.version}</version>
+
     <build>
-        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -94,6 +95,24 @@
         </resources>
 
     </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <product.version>${product.version.base}-SNAPSHOT</product.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>release</id>
+            <properties>
+                <product.version>${product.version.base}</product.version>
+            </properties>
+        </profile>
+    </profiles>
 
     <distributionManagement>
         <repository>

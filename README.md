@@ -37,7 +37,7 @@ $ mvn package
 # 実行
 
 * 普通にJavaプログラムを実行します。
-* クラスパスに `hwrand.jar` を追加します。
+* クラスパスに `hwrand-<バージョン>.jar` を追加します。
 * もし `$JAVA_HOME/jre/lib/security/java.security` 以外にHWRandの設定を組み込んだ場合、そのセキュリティ設定ファイルを `-Djava.security.properties` で指定します。
 
 # 注意
