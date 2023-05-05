@@ -13,9 +13,9 @@ jobs:
       contents: read
       packages: write
     steps:
-      - if: ${{ github.event_name == "release" }}
+      - if: ${{ github.event_name == 'release' }}
         run: echo "PROFILE=release" >> "$GITHUB_ENV"
-      - if: ${{ github.event_name != "release" }}
+      - if: ${{ github.event_name != 'release' }}
         run: echo "PROFILE=dev" >> "$GITHUB_ENV"
 
       - name: Checkout repository
