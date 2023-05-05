@@ -1,6 +1,8 @@
 name: Publish package
 
 on:
+  push:
+    branches: [master]
   release:
     types: [published]
 
@@ -11,6 +13,11 @@ jobs:
       contents: read
       packages: write
     steps:
+      - if: ${{ github.event_name == "release" }}
+        run: echo "PROFILE=release" >> "$GITHUB_ENV"
+      - if: ${{ github.event_name != "release" }}
+        run: echo "PROFILE=dev" >> "$GITHUB_ENV"
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -22,9 +29,9 @@ jobs:
           cache: 'maven'
 
       - name: 'Run Maven'
-        run: mvn -B -P release package
+        run: mvn -B -P ${{ env.PROFILE }} package
 
       - name: Publish to GitHub Packages Apache Maven
-        run: mvn -B -P release deploy
+        run: mvn -B -P ${{ env.PROFILE }} deploy
         env:
           GITHUB_TOKEN: ${{ github.token }}
