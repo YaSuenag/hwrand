@@ -34,8 +34,8 @@ public class HWRandX86Provider extends Provider{
 
   static{
     String os = System.getProperty("os.name");
-    int bits = Integer.getInteger("sun.arch.data.model");
-    if(!os.equals("Linux") || (bits != 64)){
+    String arch = System.getProperty("os.arch");
+    if(!os.equals("Linux") || !arch.equals("amd64")){
       throw new RuntimeException("HWRand supports Linux x86_64 only");
     }
 
