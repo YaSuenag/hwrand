@@ -33,6 +33,12 @@ public class HWRandX86Provider extends Provider{
   }
 
   static{
+    String os = System.getProperty("os.name");
+    int bits = Integer.getInteger("sun.arch.data.model");
+    if(!os.equals("Linux") || (bits != 64)){
+      throw new RuntimeException("HWRand supports Linux x86_64 only");
+    }
+
     InputStream resource = null;
     FileOutputStream lib = null;
     try{
