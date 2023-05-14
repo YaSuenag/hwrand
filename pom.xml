@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>6</maven.compiler.source>
         <maven.compiler.target>6</maven.compiler.target>
-        <product.version.base>0.3.0</product.version.base>
+        <product.version.base>0.4.0</product.version.base>
     </properties>
 
     <version>${product.version}</version>
