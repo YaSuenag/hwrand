@@ -1,0 +1,24 @@
+name: Publish release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 8
+          cache: maven
+      - name: Run Maven
+        run: mvn -B -P release -DskipTests deploy
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

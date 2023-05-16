@@ -65,7 +65,7 @@ public class HWRandX86Test{
   @Test
   @DisabledOnOs(value = {OS.LINUX}, architectures = {"amd64"})
   public void testPlatformCheck(){
-    Assertions.assertThrows(RuntimeException.class, new Executable(){
+    Assertions.assertThrows(ExceptionInInitializerError.class, new Executable(){
       @Override
       public void execute() throws Throwable{
         Security.addProvider(new HWRandX86Provider());
