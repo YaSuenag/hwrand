@@ -1,9 +1,8 @@
 package com.yasuenag.hwrand.x86;
 
 import java.lang.foreign.Arena;
+import java.lang.foreign.Linker;
 import java.lang.foreign.FunctionDescriptor;
-import java.lang.foreign.SegmentAllocator;
-import java.lang.foreign.SegmentScope;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.ref.Cleaner;
@@ -21,7 +20,7 @@ import com.yasuenag.ffmasm.amd64.Register;
 public class HWRandX86Provider extends Provider{
 
   private static final CodeSegment codeSegment;
-  private static final SegmentAllocator allocator;
+  private static final Arena arena;
 
   // These fields will be written from native code
   private static final boolean supportedRDRAND;
@@ -69,7 +68,7 @@ public class HWRandX86Provider extends Provider{
   /* pop %rbx           */ .pop(Register.RBX, OptionalInt.empty())
   /* leave              */ .leave()
   /* ret                */ .ret()
-                           .build();
+                           .build(Linker.Option.isTrivial());
 
     /* RDRAND */
     var rdrandDesc = FunctionDescriptor.ofVoid(
@@ -104,7 +103,7 @@ public class HWRandX86Provider extends Provider{
          /* exit:                */ .label("exit")
          /*   leave              */ .leave()
          /*   ret                */ .ret()
-                                    .build();
+                                    .build(Linker.Option.isTrivial());
 
     /* RDSEED */
     var rdseedDesc = FunctionDescriptor.ofVoid(
@@ -139,25 +138,21 @@ public class HWRandX86Provider extends Provider{
          /* exit:                */ .label("exit")
          /*   leave              */ .leave()
          /*   ret                */ .ret()
-                                    .build();
+                                    .build(Linker.Option.isTrivial());
   }
 
   static {
     try{
-      allocator = SegmentAllocator.nativeAllocator(SegmentScope.auto());
+      arena = Arena.ofAuto();
       codeSegment = new CodeSegment();
+      var action = new CodeSegment.CleanerAction(codeSegment);
       Cleaner.create()
-             .register(codeSegment, () -> {
-               try(codeSegment){
-               }
-               catch(Exception e){
-                 throw new RuntimeException(e);
-               }
-             });
+             .register(HWRandX86Provider.class, action);
+
       assembleCodes();
 
-      try(var arena = Arena.openConfined()){
-        var mem = arena.allocateArray(ValueLayout.JAVA_INT, 4);
+      try(var privateArena = Arena.ofConfined()){
+        var mem = privateArena.allocateArray(ValueLayout.JAVA_INT, 4);
 
         /* RDRAND check */
         cpuid.invoke(1, 0, mem);
@@ -193,8 +188,8 @@ public class HWRandX86Provider extends Provider{
     return fillWithRDSEED;
   }
 
-  static SegmentAllocator getAllocator(){
-    return allocator;
+  static Arena getArena(){
+    return arena;
   }
 
   public HWRandX86Provider(){

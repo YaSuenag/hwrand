@@ -8,7 +8,7 @@ NIST SP 800-90A～Cは [JEP 273: DRBG-Based SecureRandom Implementations](http:/
 
 # 対応環境
 
-* JDK 20
+* JDK 21
 * Linux x86_64
     * 動作チェックはUbuntu 22.04 (WSL2) x86_64で実施
 

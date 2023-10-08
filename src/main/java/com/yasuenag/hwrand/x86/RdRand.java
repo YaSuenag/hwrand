@@ -17,7 +17,7 @@ public class RdRand extends SecureRandomSpi{
   @Override
   protected byte[] engineGenerateSeed(int numBytes){
     try{
-      var mem = HWRandX86Provider.getAllocator().allocate(numBytes);
+      var mem = HWRandX86Provider.getArena().allocate(numBytes);
       fillWithRDRAND.invoke(mem, numBytes);
       return mem.toArray(ValueLayout.JAVA_BYTE);
     }
@@ -29,7 +29,7 @@ public class RdRand extends SecureRandomSpi{
   @Override
   protected void engineNextBytes(byte[] bytes){
     try{
-      var mem = HWRandX86Provider.getAllocator().allocate(bytes.length);
+      var mem = HWRandX86Provider.getArena().allocate(bytes.length);
       fillWithRDRAND.invoke(mem, bytes.length);
       MemorySegment.copy(mem, ValueLayout.JAVA_BYTE, 0, bytes, 0, bytes.length);
     }
