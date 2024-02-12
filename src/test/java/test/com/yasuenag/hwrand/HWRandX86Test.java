@@ -1,4 +1,4 @@
-package com.yasuenag.hwrand.test;
+package test.com.yasuenag.hwrand;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.function.Executable;
 
@@ -103,6 +105,48 @@ public class HWRandX86Test{
     SecureRandom random = null;
     try{
       random = SecureRandom.getInstance("X86RdSeed");
+    }
+    catch(NoSuchAlgorithmException e){
+      Assertions.fail(e);
+    }
+    byte[] rand1 = new byte[16];
+    byte[] rand2 = new byte[16];
+    random.nextBytes(rand1);
+    random.nextBytes(rand2);
+
+    Assertions.assertFalse(Arrays.equals(rand1, rand2));
+  }
+
+  @Test
+  @EnabledOnOs(value = {OS.LINUX, OS.WINDOWS}, architectures = {"amd64"})
+  @EnabledForJreRange(min = JRE.JAVA_22)
+  public void testFFMRDRAND(){
+    Security.addProvider(new HWRandX86Provider());
+
+    SecureRandom random = null;
+    try{
+      random = SecureRandom.getInstance("FFMX86RdRand");
+    }
+    catch(NoSuchAlgorithmException e){
+      Assertions.fail(e);
+    }
+    byte[] rand1 = new byte[16];
+    byte[] rand2 = new byte[16];
+    random.nextBytes(rand1);
+    random.nextBytes(rand2);
+
+    Assertions.assertFalse(Arrays.equals(rand1, rand2));
+  }
+
+  @Test
+  @EnabledOnOs(value = {OS.LINUX, OS.WINDOWS}, architectures = {"amd64"})
+  @EnabledForJreRange(min = JRE.JAVA_22)
+  public void testFFMRDSEED(){
+    Security.addProvider(new HWRandX86Provider());
+
+    SecureRandom random = null;
+    try{
+      random = SecureRandom.getInstance("FFMX86RdSeed");
     }
     catch(NoSuchAlgorithmException e){
       Assertions.fail(e);

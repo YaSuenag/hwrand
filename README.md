@@ -14,10 +14,13 @@ NIST SP 800-90A～Cは [JEP 273: DRBG-Based SecureRandom Implementations](http:/
    * 動作チェックはUbuntu 20.04 (WSL2) x86_64で実施
    * ビルドにはJDK、GCC、GNU Make、GNU Assembler、Maven必須
 
+JDK 22 以降の場合は Foreign Function & Memory API を用いた、RDRAND / RDSEED 各命令のダイレクト呼び出しをサポートします。これは Linux だけでなく Windows でも動作します。
+
 # ビルド方法
 
-```bash
-$ mvn package
+```
+JAVA_HOME=/path/to/jdk8 mvn compile test
+JAVA_HOME=/path/to/jdk22 mvn package
 ```
 
 # 利用方法
@@ -25,20 +28,11 @@ $ mvn package
 * [SecureRandom#getInstance(String)](http://docs.oracle.com/javase/jp/8/docs/api/java/security/SecureRandom.html#getInstance-java.lang.String-) にそれぞれの引数を与えてインスタンスを取得してください。
     * RDRAND（NIST SP 800-90A）
         * X86RdRand
+        * FFMX86RdRand
     * RDSEED（NIST SP 800-90B/C）
         * X86RdSeed
-* 具体的な利用方法については、ソース中の [test/random/Test.java](test/random/Test.java) もご覧ください。
-* `UUID::randomUUID` の `SecureRandom` に適用する場合は [test/uuid](test/uuid) をご覧ください
-
-# 実行前の準備
-
-`com.yasuenag.hwrand.x86.HWRandX86Provider` を `java.security` の `security.provider.<番号>` に設定します。具体的な設定例は [test/uuid/java.security](test/uuid/java.security) を参照してください。
-
-# 実行
-
-* 普通にJavaプログラムを実行します。
-* クラスパスに `hwrand-<バージョン>.jar` を追加します。
-* もし `$JAVA_HOME/jre/lib/security/java.security` 以外にHWRandの設定を組み込んだ場合、そのセキュリティ設定ファイルを `-Djava.security.properties` で指定します。
+        * FFMX86RdSeed
+* 具体的な利用方法については [テストコード](test/src/main/java/com/yasuenag/hwrand/test/random/Test.java) もご覧ください。
 
 # 注意
 

@@ -1,33 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.yasuenag</groupId>
-    <artifactId>hwrand-benchmark</artifactId>
+    <artifactId>random</artifactId>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
-    <version>1.2.0</version>
+
+    <name>random</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <moduleName>com.yasuenag.hwrand.test</moduleName>
+        <mainClass>com.yasuenag.hwrand.test.random.Test</mainClass>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
-        <jmh.version>1.37</jmh.version>
     </properties>
-
+    
     <dependencies>
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-core</artifactId>
-            <version>${jmh.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-generator-annprocess</artifactId>
-            <version>${jmh.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.yasuenag</groupId>
             <artifactId>hwrand</artifactId>
@@ -45,6 +36,7 @@
                     <compilerArgs>
                         <arg>-Xlint:all</arg>
                     </compilerArgs>
+                    <debug>true</debug>
                 </configuration>
             </plugin>
             <plugin>
@@ -52,15 +44,9 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
-                    <executable>${java.home}/bin/java</executable>
-                    <arguments>
-                        <argument>-classpath</argument>
-                        <classpath/>
-                        <argument>org.openjdk.jmh.Main</argument>
-                    </arguments>
+                    <mainClass>${mainClass}</mainClass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

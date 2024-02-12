@@ -18,7 +18,10 @@ public class RandomBenchmark{
 
   // WARNING: NativePRNGBlocking might be hang if entropy is exhausted.
   @Param({/* "NativePRNGBlocking", */
-          "NativePRNGNonBlocking", "DRBG", "X86RdRand", "X86RdSeed"})
+          "NativePRNG", "DRBG",  // built-in
+          "X86RdRand", "X86RdSeed",  // JNI
+          "FFMX86RdRand", "FFMX86RdSeed"  // FFM
+        })
   private String algo;
 
   static{
