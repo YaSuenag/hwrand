@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.yasuenag</groupId>
             <artifactId>hwrand</artifactId>
-            <version>0.4.0-SNAPSHOT</version>
+            <version>0.4.0</version>
         </dependency>
     </dependencies>
 
