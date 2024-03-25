@@ -1,70 +1,35 @@
 package com.yasuenag.hwrand.x86;
 
-import java.io.*;
-import java.security.*;
-import java.util.*;
+import java.security.Provider;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.yasuenag.hwrand.x86.internal.FFMHelper;
+import com.yasuenag.hwrand.x86.internal.JNIHelper;
 
 
 public class HWRandX86Provider extends Provider{
 
-  // These fields will be written from native code
-  private static boolean supportedRDRAND;
-  private static boolean supportedRDSEED;
+  private void registerJNI(Map<String, String> attrs){
+    JNIHelper jni = new JNIHelper(this, attrs);
 
-  public static boolean isSupportedRDRAND(){
-    return supportedRDRAND;
-  }
-
-  public static boolean isSupportedRDSEED(){
-    return supportedRDSEED;
-  }
-
-  private static native void checkCPUFeatures();
-
-  private static void closeSilently(Closeable res){
-    try{
-      if(res != null){
-        res.close();
-      }
+    if(JNIHelper.isRDRANDAvailable()){
+      putService(jni.getX86RdRand());
     }
-    catch(IOException e){
-      throw new RuntimeException(e);
+    if(JNIHelper.isRDSEEDAvailable()){
+      putService(jni.getX86RdSeed());
     }
   }
 
-  static{
-    String os = System.getProperty("os.name");
-    String arch = System.getProperty("os.arch");
-    if(!os.equals("Linux") || !arch.equals("amd64")){
-      throw new RuntimeException("HWRand supports Linux x86_64 only");
+  private void registerFFM(Map<String, String> attrs){
+    FFMHelper ffm = new FFMHelper(this, attrs);
+
+    if(FFMHelper.isRDRANDAvailable()){
+      putService(ffm.getX86RdRand());
     }
-
-    InputStream resource = null;
-    FileOutputStream lib = null;
-    try{
-      File f = File.createTempFile("libhwrandx86-", ".so");
-      f.deleteOnExit();
-
-      resource = HWRandX86Provider.class.getResourceAsStream("/native/libhwrandx86.so");
-      lib = new FileOutputStream(f);
-
-      byte[] bytes = new byte[1024 * 10]; // 10KB
-      int nRead;
-      while((nRead = resource.read(bytes)) != -1){
-        lib.write(bytes, 0, nRead);
-      }
-
-      System.load(f.getAbsolutePath());
+    if(FFMHelper.isRDSEEDAvailable()){
+      putService(ffm.getX86RdSeed());
     }
-    catch(IOException e){
-      throw new RuntimeException(e);
-    }
-    finally{
-      closeSilently(resource);
-      closeSilently(lib);
-    }
-
-    checkCPUFeatures();
   }
 
   public HWRandX86Provider(){
@@ -77,16 +42,21 @@ public class HWRandX86Provider extends Provider{
     attrs.put("ThreadSafe", "true");
     attrs.put("ImplementedIn", "Hardware");
 
-    if(isSupportedRDRAND()){
-      putService(new Provider.Service(this, "SecureRandom", "X86RdRand",
-                                      RdRand.class.getName(), null, attrs));
+    try{
+      registerJNI(attrs);
+    }
+    catch(RuntimeException e){
+      // We can ignore RuntimeException thrown by JNIHelper::init
+      //  if JDK supports FFM because we can fallback to FFM.
+      // Otherwise rethrow exception.
+      if(!FFMHelper.ffmSupported()){
+        throw e;
+      }
     }
 
-    if(isSupportedRDSEED()){
-      putService(new Provider.Service(this, "SecureRandom", "X86RdSeed",
-                                      RdSeed.class.getName(), null, attrs));
+    if(FFMHelper.ffmSupported()){
+      registerFFM(attrs);
     }
-
   }
 
 }

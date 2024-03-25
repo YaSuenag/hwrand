@@ -1,11 +1,11 @@
-name: CI
+name: Deploy snapshot library
 
 on:
-  pull_request:
+  push:
     branches: [master]
 
 jobs:
-  ci:
+  snapshot-deploy:
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -24,9 +24,9 @@ jobs:
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_8_X64 }}
           GITHUB_TOKEN: ${{ github.token }}
-        run: mvn -B compile test
+        run: mvn -B -DskipTests compile
       - name: Run Maven with Java 22
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_22_X64 }}
           GITHUB_TOKEN: ${{ github.token }}
-        run: mvn -B package
+        run: mvn -B -DskipTests deploy

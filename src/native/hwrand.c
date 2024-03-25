@@ -9,12 +9,12 @@ void fill_with_rdseed(unsigned char data[], int len);
 
 
 /*
- * Class:     com_yasuenag_hwrand_x86_HWRandX86Provider
+ * Class:     com_yasuenag_hwrand_x86_internal_JNIHelper
  * Method:    checkCPUFeatures
  * Signature: ()V
  */
 JNIEXPORT void JNICALL
-      Java_com_yasuenag_hwrand_x86_HWRandX86Provider_checkCPUFeatures
+      Java_com_yasuenag_hwrand_x86_internal_JNIHelper_checkCPUFeatures
                                                      (JNIEnv *env, jclass cls){
   int ebx, ecx;
   jfieldID rdrandFieldID, rdseedFieldID;
