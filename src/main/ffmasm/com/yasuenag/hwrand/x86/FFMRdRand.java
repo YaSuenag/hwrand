@@ -11,9 +11,9 @@ import com.yasuenag.hwrand.x86.internal.FFMHelper;
 
 public class FFMRdRand extends SecureRandomSpi{
 
-  private MethodHandle fillWithRDRAND;
+  private static final MethodHandle fillWithRDRAND;
 
-  public FFMRdRand(){
+  static{
     fillWithRDRAND = FFMHelper.getFillWithRDRAND();
   }
 
@@ -21,7 +21,7 @@ public class FFMRdRand extends SecureRandomSpi{
   protected byte[] engineGenerateSeed(int numBytes){
     try(var arena = Arena.ofConfined()){
       var mem = arena.allocate(numBytes);
-      fillWithRDRAND.invoke(mem, numBytes);
+      fillWithRDRAND.invokeExact(mem, numBytes);
       return mem.toArray(ValueLayout.JAVA_BYTE);
     }
     catch(Throwable t){
@@ -32,7 +32,7 @@ public class FFMRdRand extends SecureRandomSpi{
   @Override
   protected void engineNextBytes(byte[] bytes){
     try{
-      fillWithRDRAND.invoke(MemorySegment.ofArray(bytes), bytes.length);
+      fillWithRDRAND.invokeExact(MemorySegment.ofArray(bytes), bytes.length);
     }
     catch(Throwable t){
       throw new RuntimeException(t);

@@ -9,7 +9,7 @@ import org.openjdk.jmh.annotations.*;
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.Throughput)
-@Fork(value = 1, jvmArgsAppend = {"-Xms8g", "-Xmx8g", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseEpsilonGC", "-XX:+AlwaysPreTouch"})
+@Fork(value = 1, jvmArgsAppend = {"-Xms8g", "-Xmx8g", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseEpsilonGC", "-XX:+AlwaysPreTouch", "--enable-native-access=ALL-UNNAMED"})
 @Warmup(iterations = 1, time = 3, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 3, time = 10, timeUnit = TimeUnit.SECONDS)
 public class RandomBenchmark{
