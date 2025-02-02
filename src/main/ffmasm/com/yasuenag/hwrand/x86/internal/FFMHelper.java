@@ -84,9 +84,6 @@ public class FFMHelper{
                   ValueLayout.JAVA_INT // 2nd argument (length)
                 );
     fillWithRDRAND = AMD64AsmBuilder.create(AMD64AsmBuilder.class, codeSegment, rdrandDesc)
-         /*   push %rbp          */ .push(Register.RBP)
-         /*   mov %rsp, %rbp     */ .movMR(Register.RSP, Register.RBP, OptionalInt.empty())
-         /* .align 16            */ .alignTo16BytesWithNOP()
          /* bulk:                */ .label("bulk")
          /*   cmp $8, <arg2>     */ .cmp(arg2, 8, OptionalInt.empty())
          /*   jl last_call       */ .jl("last_call")
@@ -109,7 +106,6 @@ public class FFMHelper{
          /*   sub $1, <arg2>     */ .sub(arg2, 1, OptionalInt.empty())
          /*   jne proc1byte      */ .jne("proc1byte")
          /* exit:                */ .label("exit")
-         /*   leave              */ .leave()
          /*   ret                */ .ret()
                                     .build(Linker.Option.critical(true));
 
@@ -119,9 +115,6 @@ public class FFMHelper{
                   ValueLayout.JAVA_INT // 2nd argument (length)
                 );
     fillWithRDSEED = AMD64AsmBuilder.create(AMD64AsmBuilder.class, codeSegment, rdseedDesc)
-         /*   push %rbp          */ .push(Register.RBP)
-         /*   mov %rsp, %rbp     */ .movMR(Register.RSP, Register.RBP, OptionalInt.empty())
-         /* .align 16            */ .alignTo16BytesWithNOP()
          /* bulk:                */ .label("bulk")
          /*   cmp $8, <arg2>     */ .cmp(arg2, 8, OptionalInt.empty())
          /*   jl last_call       */ .jl("last_call")
@@ -144,7 +137,6 @@ public class FFMHelper{
          /*   sub $1, <arg2>     */ .sub(arg2, 1, OptionalInt.empty())
          /*   jne proc1byte      */ .jne("proc1byte")
          /* exit:                */ .label("exit")
-         /*   leave              */ .leave()
          /*   ret                */ .ret()
                                     .build(Linker.Option.critical(true));
   }

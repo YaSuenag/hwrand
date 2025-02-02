@@ -19,10 +19,11 @@ public class FFMRdRand extends SecureRandomSpi{
 
   @Override
   protected byte[] engineGenerateSeed(int numBytes){
-    try(var arena = Arena.ofConfined()){
-      var mem = arena.allocate(numBytes);
-      fillWithRDRAND.invokeExact(mem, numBytes);
-      return mem.toArray(ValueLayout.JAVA_BYTE);
+    try{
+      var result = new byte[numBytes];
+      var mem = MemorySegment.ofArray(result);
+      fillWithRDRAND.invokeExact(result, result.length);
+      return result;
     }
     catch(Throwable t){
       throw new RuntimeException(t);
