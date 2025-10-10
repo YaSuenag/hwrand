@@ -10,8 +10,6 @@
     <name>HWRand</name>
 
     <scm>
-        <connection>scm:git:git://github.com/YaSuenag/hwrand.git</connection>
-        <developerConnection>scm:git:ssh://github.com:YaSuenag/hwrand.git</developerConnection>
         <url>https://github.com/YaSuenag/hwrand</url>
     </scm>
 
@@ -24,7 +22,7 @@
     <repositories>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/YaSuenag/ffmasm</url>
+            <url>https://maven.pkg.github.com/yasuenag/ffmasm</url>
         </repository>
     </repositories>
 
