@@ -12,7 +12,7 @@ import java.util.OptionalInt;
 
 import com.yasuenag.ffmasm.CodeSegment;
 import com.yasuenag.ffmasm.UnsupportedPlatformException;
-import com.yasuenag.ffmasm.amd64.AMD64AsmBuilder;
+import com.yasuenag.ffmasm.AsmBuilder;
 import com.yasuenag.ffmasm.amd64.Register;
 
 import com.yasuenag.hwrand.x86.FFMRdRand;
@@ -61,7 +61,7 @@ public class FFMHelper{
                   ValueLayout.JAVA_INT, // 2nd argument (ECX)
                   ValueLayout.ADDRESS   // 3rd argument (result)
                 );
-    cpuid = AMD64AsmBuilder.create(AMD64AsmBuilder.class, codeSegment, cpuidDesc)
+    cpuid = new AsmBuilder.AMD64(codeSegment, cpuidDesc)
   /* push %rbp          */ .push(Register.RBP)
   /* mov %rsp, %rbp     */ .movMR(Register.RSP, Register.RBP, OptionalInt.empty())
   /* push %rbx          */ .push(Register.RBX)
@@ -83,7 +83,7 @@ public class FFMHelper{
                   ValueLayout.ADDRESS, // 1st argument (mem)
                   ValueLayout.JAVA_INT // 2nd argument (length)
                 );
-    fillWithRDRAND = AMD64AsmBuilder.create(AMD64AsmBuilder.class, codeSegment, rdrandDesc)
+    fillWithRDRAND = new AsmBuilder.AMD64(codeSegment, rdrandDesc)
          /* bulk:                */ .label("bulk")
          /*   cmp $8, <arg2>     */ .cmp(arg2, 8, OptionalInt.empty())
          /*   jl last_call       */ .jl("last_call")
@@ -114,7 +114,7 @@ public class FFMHelper{
                   ValueLayout.ADDRESS, // 1st argument (mem)
                   ValueLayout.JAVA_INT // 2nd argument (length)
                 );
-    fillWithRDSEED = AMD64AsmBuilder.create(AMD64AsmBuilder.class, codeSegment, rdseedDesc)
+    fillWithRDSEED = new AsmBuilder.AMD64(codeSegment, rdseedDesc)
          /* bulk:                */ .label("bulk")
          /*   cmp $8, <arg2>     */ .cmp(arg2, 8, OptionalInt.empty())
          /*   jl last_call       */ .jl("last_call")

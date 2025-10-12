@@ -10,7 +10,7 @@
     <name>HWRand</name>
 
     <scm>
-        <url>https://github.com/YaSuenag/hwrand</url>
+        <url>https://github.com/yasuenag/hwrand</url>
     </scm>
 
     <properties>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.yasuenag</groupId>
             <artifactId>ffmasm</artifactId>
-            <version>0.5.0</version>
+            <version>0.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -178,7 +178,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/YaSuenag/hwrand</url>
+            <url>https://maven.pkg.github.com/yasuenag/hwrand</url>
         </repository>
     </distributionManagement>
 </project>
