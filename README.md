@@ -19,9 +19,14 @@ JDK 22 以降の場合は Foreign Function & Memory API を用いた、RDRAND / 
 # ビルド方法
 
 ```
-JAVA_HOME=/path/to/jdk8 mvn compile test
-JAVA_HOME=/path/to/jdk22 mvn package
+JAVA_HOME=/path/to/jdk8 mvn compile
+JAVA_HOME=/path/to/jdk22 mvn compile
+JAVA_HOME=/path/to/jdk25 mvn compile
+JAVA_HOME=/path/to/jdk25 mvn package
 ```
+
+> [!TIP]
+> テストは各 JDK バージョンで `mvn verify` を行うことで実施できます。
 
 # 利用方法
 

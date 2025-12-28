@@ -1,4 +1,4 @@
-package test.com.yasuenag.hwrand;
+package com.yasuenag.hwrand.it;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,18 +14,22 @@ import com.yasuenag.hwrand.x86.HWRandX86Provider;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
-import org.junit.jupiter.api.function.Executable;
 
 
-public class HWRandX86Test{
+public class HWRandIT{
 
-  private List<String> getCPUFlags() throws IOException{
+  private static boolean hasRDRAND;
+  private static boolean hasRDSEED;
+
+  @BeforeAll
+  public static void prepare() throws IOException{
+    List<String> cpuFeatures = Collections.emptyList();
     BufferedReader reader = null;
     try{
       reader = new BufferedReader(new FileReader("/proc/cpuinfo"));
@@ -34,7 +38,7 @@ public class HWRandX86Test{
         if(line.startsWith("flags")){
           int flagsIdx = line.indexOf(":");
           String flags = line.substring(flagsIdx + 2);
-          return Arrays.asList(flags.split(" "));
+          cpuFeatures = Arrays.asList(flags.split(" "));
         }
       }
     }
@@ -43,42 +47,15 @@ public class HWRandX86Test{
         reader.close();
       }
     }
-    return Collections.emptyList();
-  }
 
-  private boolean hasRDRAND(){
-    try{
-      return getCPUFlags().contains("rdrand");
-    }
-    catch(IOException e){
-      throw new RuntimeException(e);
-    }
-  }
-
-  private boolean hasRDSEED(){
-    try{
-      return getCPUFlags().contains("rdseed");
-    }
-    catch(IOException e){
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Test
-  @DisabledOnOs(value = {OS.LINUX}, architectures = {"amd64"})
-  public void testPlatformCheck(){
-    Assertions.assertThrows(ExceptionInInitializerError.class, new Executable(){
-      @Override
-      public void execute() throws Throwable{
-        Security.addProvider(new HWRandX86Provider());
-      }
-    });
+    hasRDRAND = cpuFeatures.contains("rdrand");
+    hasRDSEED = cpuFeatures.contains("rdseed");
   }
 
   @Test
   @EnabledOnOs(value = {OS.LINUX}, architectures = {"amd64"})
   public void testRDRAND(){
-    Assumptions.assumeTrue(hasRDRAND());
+    Assumptions.assumeTrue(hasRDRAND);
     Security.addProvider(new HWRandX86Provider());
 
     SecureRandom random = null;
@@ -99,7 +76,7 @@ public class HWRandX86Test{
   @Test
   @EnabledOnOs(value = {OS.LINUX}, architectures = {"amd64"})
   public void testRDSEED(){
-    Assumptions.assumeTrue(hasRDSEED());
+    Assumptions.assumeTrue(hasRDSEED);
     Security.addProvider(new HWRandX86Provider());
 
     SecureRandom random = null;
@@ -121,6 +98,7 @@ public class HWRandX86Test{
   @EnabledOnOs(value = {OS.LINUX, OS.WINDOWS}, architectures = {"amd64"})
   @EnabledForJreRange(min = JRE.JAVA_22)
   public void testFFMRDRAND(){
+    Assumptions.assumeTrue(hasRDRAND);
     Security.addProvider(new HWRandX86Provider());
 
     SecureRandom random = null;
@@ -142,11 +120,56 @@ public class HWRandX86Test{
   @EnabledOnOs(value = {OS.LINUX, OS.WINDOWS}, architectures = {"amd64"})
   @EnabledForJreRange(min = JRE.JAVA_22)
   public void testFFMRDSEED(){
+    Assumptions.assumeTrue(hasRDSEED);
     Security.addProvider(new HWRandX86Provider());
 
     SecureRandom random = null;
     try{
       random = SecureRandom.getInstance("FFMX86RdSeed");
+    }
+    catch(NoSuchAlgorithmException e){
+      Assertions.fail(e);
+    }
+    byte[] rand1 = new byte[16];
+    byte[] rand2 = new byte[16];
+    random.nextBytes(rand1);
+    random.nextBytes(rand2);
+
+    Assertions.assertFalse(Arrays.equals(rand1, rand2));
+  }
+
+  @Test
+  @EnabledOnOs(value = {OS.LINUX, OS.WINDOWS}, architectures = {"amd64"})
+  @EnabledForJreRange(min = JRE.JAVA_25)
+  public void testJVMCIRDRAND(){
+    Assumptions.assumeTrue(hasRDRAND);
+    Security.addProvider(new HWRandX86Provider());
+
+    SecureRandom random = null;
+    try{
+      random = SecureRandom.getInstance("JVMCIX86RdRand");
+    }
+    catch(NoSuchAlgorithmException e){
+      Assertions.fail(e);
+    }
+    byte[] rand1 = new byte[16];
+    byte[] rand2 = new byte[16];
+    random.nextBytes(rand1);
+    random.nextBytes(rand2);
+
+    Assertions.assertFalse(Arrays.equals(rand1, rand2));
+  }
+
+  @Test
+  @EnabledOnOs(value = {OS.LINUX, OS.WINDOWS}, architectures = {"amd64"})
+  @EnabledForJreRange(min = JRE.JAVA_25)
+  public void testJVMCIRDSEED(){
+    Assumptions.assumeTrue(hasRDSEED);
+    Security.addProvider(new HWRandX86Provider());
+
+    SecureRandom random = null;
+    try{
+      random = SecureRandom.getInstance("JVMCIX86RdSeed");
     }
     catch(NoSuchAlgorithmException e){
       Assertions.fail(e);
