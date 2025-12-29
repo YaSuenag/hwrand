@@ -9,7 +9,19 @@ import org.openjdk.jmh.annotations.*;
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.Throughput)
-@Fork(value = 1, jvmArgsAppend = {"-Xms8g", "-Xmx8g", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseEpsilonGC", "-XX:+AlwaysPreTouch", "--enable-native-access=ALL-UNNAMED"})
+@Fork(value = 1, jvmArgsAppend = {
+                     "-Xms8g",
+                     "-Xmx8g",
+                     "-XX:+AlwaysPreTouch",
+                     "-XX:+UnlockExperimentalVMOptions",
+                     "-XX:+EnableJVMCI",
+                     "--add-exports=jdk.internal.vm.ci/jdk.vm.ci.code=ALL-UNNAMED",
+                     "--add-exports=jdk.internal.vm.ci/jdk.vm.ci.code.site=ALL-UNNAMED",
+                     "--add-exports=jdk.internal.vm.ci/jdk.vm.ci.hotspot=ALL-UNNAMED",
+                     "--add-exports=jdk.internal.vm.ci/jdk.vm.ci.meta=ALL-UNNAMED",
+                     "--add-exports=jdk.internal.vm.ci/jdk.vm.ci.runtime=ALL-UNNAMED",
+                     "--enable-native-access=ALL-UNNAMED"
+                 })
 @Warmup(iterations = 1, time = 3, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 3, time = 10, timeUnit = TimeUnit.SECONDS)
 public class RandomBenchmark{
@@ -20,7 +32,8 @@ public class RandomBenchmark{
   @Param({/* "NativePRNGBlocking", */
           "NativePRNG", "DRBG",  // built-in
           "X86RdRand", "X86RdSeed",  // JNI
-          "FFMX86RdRand", "FFMX86RdSeed"  // FFM
+          "FFMX86RdRand", "FFMX86RdSeed",  // FFM
+          "JVMCIX86RdRand", "JVMCIX86RdSeed"  // JVMCI
         })
   private String algo;
 
