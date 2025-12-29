@@ -48,7 +48,6 @@
                         </goals>
                         <configuration>
                             <outputProperty>maven.compile.classpath</outputProperty>
-                            <pathSeparator>:</pathSeparator>
                         </configuration>
                     </execution>
                 </executions>
@@ -223,7 +222,7 @@
                                     <compilerArgs>
                                         <arg>-Xlint:all</arg>
                                         <arg>-cp</arg>
-                                        <arg>${maven.compile.classpath}:${project.build.outputDirectory}/META-INF/versions/22:${project.build.outputDirectory}</arg>
+                                        <arg>${maven.compile.classpath}${path.separator}${project.build.outputDirectory}${file.separator}META-INF${file.separator}versions${file.separator}22${path.separator}${project.build.outputDirectory}</arg>
                                     </compilerArgs>
                                     <compileSourceRoots>
                                         <compileSourceRoot>${project.basedir}/src/main/jvmci</compileSourceRoot>
