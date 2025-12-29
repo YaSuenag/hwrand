@@ -16,6 +16,14 @@ NIST SP 800-90A～Cは [JEP 273: DRBG-Based SecureRandom Implementations](http:/
 
 JDK 22 以降の場合は Foreign Function & Memory API を用いた、RDRAND / RDSEED 各命令のダイレクト呼び出しをサポートします。これは Linux だけでなく Windows でも動作します。
 
+JDK 25 以降の場合は JVMCI を用いた RDRAND / RDSEED の呼び出しもサポートします。これも Windows でも動作しますが利用時には Java 起動オプションの設定が必要です。 `java` 起動引数に `@jvmci.opts` のように [jvmci.opts](jvmci.opts) またはその記述内容を設定する必要があります。
+
+> [!TIP]
+> JVMCI の実装には [ffmasm](https://github.com/YaSuenag/ffmasm) 付属の [jvmci-adapter](https://github.com/YaSuenag/ffmasm/packages/2776023) を利用しています。
+
+> [!NOTE]
+> jvmci.opts には Unnamed Module の設定が記述されています。名前付きモジュールで HWRand を利用する場合は `jdk.internal.vm.ci` のエクスポート先を `com.yasuenag.ffmasmtools.jvmci` に設定してください。
+
 # ビルド方法
 
 ```
@@ -34,9 +42,11 @@ JAVA_HOME=/path/to/jdk25 mvn package
     * RDRAND（NIST SP 800-90A）
         * X86RdRand
         * FFMX86RdRand
+        * JVMCIX86RdRand
     * RDSEED（NIST SP 800-90B/C）
         * X86RdSeed
         * FFMX86RdSeed
+        * JVMCIX86RdSeed
 * 具体的な利用方法については [テストコード](test/src/main/java/com/yasuenag/hwrand/test/random/Test.java) もご覧ください。
 
 # 注意
