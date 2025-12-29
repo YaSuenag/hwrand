@@ -6,9 +6,10 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,14 +20,31 @@ jobs:
           java-version: |
             8
             22
+            25
           cache: maven
+
       - name: Run Maven with Java 8
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_8_X64 }}
-          GITHUB_TOKEN: ${{ github.token }}
-        run: mvn -B compile test
+        run: mvn -B compile
       - name: Run Maven with Java 22
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_22_X64 }}
-          GITHUB_TOKEN: ${{ github.token }}
-        run: mvn -B package
+        run: mvn -B compile
+      - name: Run Maven with Java 25
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_25_X64 }}
+        run: mvn -B compile
+
+      - name: Run test on Java 8
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_8_X64 }}
+        run: mvn -B verify
+      - name: Run test on Java 22
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_22_X64 }}
+        run: mvn -B verify
+      - name: Run Maven with Java 25
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_25_X64 }}
+        run: mvn -B verify

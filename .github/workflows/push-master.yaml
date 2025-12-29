@@ -5,10 +5,11 @@ on:
     branches: [master]
 
 jobs:
-  snapshot-deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
+  check:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,14 +20,59 @@ jobs:
           java-version: |
             8
             22
+            25
           cache: maven
       - name: Run Maven with Java 8
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_8_X64 }}
-          GITHUB_TOKEN: ${{ github.token }}
-        run: mvn -B -DskipTests compile
+        run: mvn -B compile
       - name: Run Maven with Java 22
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_22_X64 }}
+        run: mvn -B compile
+      - name: Run Maven with Java 25
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_25_X64 }}
+        run: mvn -B compile
+
+      - name: Run test on Java 8
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_8_X64 }}
+        run: mvn -B verify
+      - name: Run test on Java 22
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_22_X64 }}
+        run: mvn -B verify
+      - name: Run test on Java 25
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_25_X64 }}
+        run: mvn -B verify
+
+      - name: Upload source tree
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v6
+        with:
+          name: source-tree
+          path: ${{ github.workspace }}
+
+  snapshot-deploy:
+    if: matrix.os == 'ubuntu-latest'
+    needs: [check]
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Download source tree
+        uses: actions/download-artifact@v7
+        with:
+          name: source-tree
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+      - name: Deploy
+        env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: mvn -B -DskipTests deploy
+        run: mvn -B deploy
