@@ -11,13 +11,22 @@ import com.yasuenag.hwrand.x86.internal.JNIHelper;
 public class HWRandX86Provider extends Provider{
 
   private void registerJNI(Map<String, String> attrs){
-    JNIHelper jni = new JNIHelper(this, attrs);
+    try{
+      JNIHelper jni = new JNIHelper(this, attrs);
 
-    if(JNIHelper.isRDRANDAvailable()){
-      putService(jni.getX86RdRand());
+      if(JNIHelper.isRDRANDAvailable()){
+        putService(jni.getX86RdRand());
+      }
+      if(JNIHelper.isRDSEEDAvailable()){
+        putService(jni.getX86RdSeed());
+      }
     }
-    if(JNIHelper.isRDSEEDAvailable()){
-      putService(jni.getX86RdSeed());
+    catch(RuntimeException e){
+      float jdkFeatureNumber = Float.parseFloat(System.getProperty("java.specification.version"));
+      if(jdkFeatureNumber < 22){
+        throw e;
+      }
+      // ignore: maybe on Windows, but HWRand works on FFM at least.
     }
   }
 
