@@ -20,14 +20,29 @@ import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.function.Executable;
 
 
 public class HWRandIT{
 
-  private static boolean hasRDRAND;
-  private static boolean hasRDSEED;
+  public static class ExceptionTest implements Executable{
+    private final String algo;
+
+    public ExceptionTest(String algo){
+      this.algo = algo;
+    }
+
+    @Override
+    public void execute() throws Throwable{
+      SecureRandom.getInstance(algo);
+    }
+  }
+
+  private static boolean hasRDRAND = false;
+  private static boolean hasRDSEED = false;
 
   @BeforeAll
+  @EnabledOnOs(OS.LINUX)
   public static void prepare() throws IOException{
     List<String> cpuFeatures = Collections.emptyList();
     BufferedReader reader = null;
@@ -52,6 +67,16 @@ public class HWRandIT{
     hasRDSEED = cpuFeatures.contains("rdseed");
   }
 
+  @BeforeAll
+  @EnabledOnOs(OS.WINDOWS)
+  @EnabledForJreRange(min = JRE.JAVA_22)
+  public static void prepareForWindows() throws IOException{
+    // Modern CPU supports both RDRAND and RDSEED, thus we assume
+    // they are enabled on test platform.
+    hasRDRAND = true;
+    hasRDSEED = true;
+  }
+
   @Test
   @EnabledOnOs(value = {OS.LINUX}, architectures = {"amd64"})
   public void testRDRAND(){
@@ -74,6 +99,13 @@ public class HWRandIT{
   }
 
   @Test
+  @EnabledOnOs(OS.WINDOWS)
+  public void testJNIRDRANDOnWindows(){
+    Security.addProvider(new HWRandX86Provider());
+    Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("X86RdRand"));
+  }
+
+  @Test
   @EnabledOnOs(value = {OS.LINUX}, architectures = {"amd64"})
   public void testRDSEED(){
     Assumptions.assumeTrue(hasRDSEED);
@@ -92,6 +124,13 @@ public class HWRandIT{
     random.nextBytes(rand2);
 
     Assertions.assertFalse(Arrays.equals(rand1, rand2));
+  }
+
+  @Test
+  @EnabledOnOs(OS.WINDOWS)
+  public void testJNIRDSEEDOnWindows(){
+    Security.addProvider(new HWRandX86Provider());
+    Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("X86RdSeed"));
   }
 
   @Test
@@ -117,6 +156,13 @@ public class HWRandIT{
   }
 
   @Test
+  @EnabledForJreRange(max = JRE.JAVA_21)
+  public void testDisableFFMRDRAND(){
+    Security.addProvider(new HWRandX86Provider());
+    Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("FFMX86RdRand"));
+  }
+
+  @Test
   @EnabledOnOs(value = {OS.LINUX, OS.WINDOWS}, architectures = {"amd64"})
   @EnabledForJreRange(min = JRE.JAVA_22)
   public void testFFMRDSEED(){
@@ -136,6 +182,13 @@ public class HWRandIT{
     random.nextBytes(rand2);
 
     Assertions.assertFalse(Arrays.equals(rand1, rand2));
+  }
+
+  @Test
+  @EnabledForJreRange(max = JRE.JAVA_21)
+  public void testDisableFFMRDSEED(){
+    Security.addProvider(new HWRandX86Provider());
+    Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("FFMX86RdSeed"));
   }
 
   @Test
@@ -161,6 +214,13 @@ public class HWRandIT{
   }
 
   @Test
+  @EnabledForJreRange(max = JRE.JAVA_24)
+  public void testDisableJVMCIRDRAND(){
+    Security.addProvider(new HWRandX86Provider());
+    Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("JVMCIX86RdRand"));
+  }
+
+  @Test
   @EnabledOnOs(value = {OS.LINUX, OS.WINDOWS}, architectures = {"amd64"})
   @EnabledForJreRange(min = JRE.JAVA_25)
   public void testJVMCIRDSEED(){
@@ -180,6 +240,13 @@ public class HWRandIT{
     random.nextBytes(rand2);
 
     Assertions.assertFalse(Arrays.equals(rand1, rand2));
+  }
+
+  @Test
+  @EnabledForJreRange(max = JRE.JAVA_24)
+  public void testDisableJVMCIRDSEED(){
+    Security.addProvider(new HWRandX86Provider());
+    Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("JVMCIX86RdSeed"));
   }
 
 }
