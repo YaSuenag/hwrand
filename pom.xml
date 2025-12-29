@@ -123,21 +123,6 @@
                                         </arguments>
                                     </configuration>
                             </execution>
-                            <execution>
-                                <id>make-clean-jni</id>
-                                <phase>clean</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>make</executable>
-                                    <arguments>
-                                        <argument>-C</argument>
-                                        <argument>src/native</argument>
-                                        <argument>clean</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
