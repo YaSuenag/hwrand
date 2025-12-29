@@ -54,44 +54,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.1</version>
-                <executions>
-                    <execution>
-                        <id>make-jni</id>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>exec</goal>
-                            </goals>
-                            <configuration>
-                                <executable>make</executable>
-                                <arguments>
-                                    <argument>BUILDDIR=${project.build.directory}/libhwrandx86</argument>
-                                    <argument>OUTDIR=${project.build.outputDirectory}/native</argument>
-                                    <argument>-C</argument>
-                                    <argument>src/native</argument>
-                                </arguments>
-                             </configuration>
-                        </execution>
-                    <execution>
-                        <id>make-clean-jni</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>make</executable>
-                            <arguments>
-                                <argument>-C</argument>
-                                <argument>src/native</argument>
-                                <argument>clean</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
@@ -131,6 +93,56 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <name>Linux</name>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.1</version>
+                        <executions>
+                            <execution>
+                                <id>make-jni</id>
+                                    <phase>generate-resources</phase>
+                                    <goals>
+                                        <goal>exec</goal>
+                                    </goals>
+                                    <configuration>
+                                        <executable>make</executable>
+                                        <arguments>
+                                            <argument>BUILDDIR=${project.build.directory}/libhwrandx86</argument>
+                                            <argument>OUTDIR=${project.build.outputDirectory}/native</argument>
+                                            <argument>-C</argument>
+                                            <argument>src/native</argument>
+                                        </arguments>
+                                    </configuration>
+                            </execution>
+                            <execution>
+                                <id>make-clean-jni</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>make</executable>
+                                    <arguments>
+                                        <argument>-C</argument>
+                                        <argument>src/native</argument>
+                                        <argument>clean</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>java6</id>
             <activation>
