@@ -74,11 +74,13 @@ jobs:
       name: Build with Java 22
       env:
         JAVA_HOME: ${{ env.JAVA_HOME_22_X64 }}
+        GITHUB_TOKEN: ${{ github.token }}
       run: mvn -B compile
     - if: matrix.language == 'java'
       name: Build with Java 25
       env:
         JAVA_HOME: ${{ env.JAVA_HOME_25_X64 }}
+        GITHUB_TOKEN: ${{ github.token }}
       run: mvn -B compile
 
     # ℹ️ Command-line programs to run using the OS shell.

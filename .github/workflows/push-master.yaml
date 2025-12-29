@@ -30,23 +30,28 @@ jobs:
       - name: Run Maven with Java 22
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_22_X64 }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: mvn -B compile
       - name: Run Maven with Java 25
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_25_X64 }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: mvn -B compile
 
       - name: Run test on Java 8
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_8_X64 }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: mvn -B verify
       - name: Run test on Java 22
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_22_X64 }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: mvn -B verify
       - name: Run test on Java 25
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_25_X64 }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: mvn -B verify
 
       - name: Upload source tree
