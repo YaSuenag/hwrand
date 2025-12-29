@@ -14,8 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <moduleName>com.yasuenag.hwrand.test</moduleName>
         <mainClass>com.yasuenag.hwrand.test.random.Test</mainClass>
-        <maven.compiler.source>22</maven.compiler.source>
-        <maven.compiler.target>22</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
     </properties>
     
     <dependencies>
@@ -44,7 +44,13 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
-                    <mainClass>${mainClass}</mainClass>
+                    <executable>${java.home}/bin/java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>@${project.basedir}/../jvmci.opts</argument>
+                        <argument>${mainClass}</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>
