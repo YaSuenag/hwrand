@@ -42,7 +42,6 @@ public class HWRandIT{
   private static boolean hasRDSEED = false;
 
   @BeforeAll
-  @EnabledOnOs(OS.LINUX)
   public static void prepare() throws IOException{
     List<String> cpuFeatures = Collections.emptyList();
     BufferedReader reader = null;
@@ -56,6 +55,15 @@ public class HWRandIT{
           cpuFeatures = Arrays.asList(flags.split(" "));
         }
       }
+
+      hasRDRAND = cpuFeatures.contains("rdrand");
+      hasRDSEED = cpuFeatures.contains("rdseed");
+    }
+    catch(FileNotFoundException e){
+      // Modern CPU supports both RDRAND and RDSEED, thus we assume
+      // they are enabled on test platform.
+      hasRDRAND = true;
+      hasRDSEED = true;
     }
     finally{
       if(reader != null){
@@ -63,18 +71,6 @@ public class HWRandIT{
       }
     }
 
-    hasRDRAND = cpuFeatures.contains("rdrand");
-    hasRDSEED = cpuFeatures.contains("rdseed");
-  }
-
-  @BeforeAll
-  @EnabledOnOs(OS.WINDOWS)
-  @EnabledForJreRange(min = JRE.JAVA_22)
-  public static void prepareForWindows() throws IOException{
-    // Modern CPU supports both RDRAND and RDSEED, thus we assume
-    // they are enabled on test platform.
-    hasRDRAND = true;
-    hasRDSEED = true;
   }
 
   @Test

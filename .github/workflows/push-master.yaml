@@ -62,7 +62,6 @@ jobs:
           path: ${{ github.workspace }}
 
   snapshot-deploy:
-    if: matrix.os == 'ubuntu-latest'
     needs: [check]
     runs-on: ubuntu-latest
     permissions:
