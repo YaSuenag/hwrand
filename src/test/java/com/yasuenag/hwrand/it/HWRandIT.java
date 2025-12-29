@@ -104,6 +104,7 @@ public class HWRandIT{
 
   @Test
   @EnabledOnOs(OS.WINDOWS)
+  @EnabledForJreRange(max = JRE.JAVA_21)
   public void testJNIOnWindows(){
     Assertions.assertThrows(RuntimeException.class, new ExceptionTestWithJDK8OnWindows());
   }
