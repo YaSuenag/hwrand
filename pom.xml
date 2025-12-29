@@ -67,6 +67,8 @@
                             <configuration>
                                 <executable>make</executable>
                                 <arguments>
+                                    <argument>BUILDDIR=${project.build.directory}/libhwrandx86</argument>
+                                    <argument>OUTDIR=${project.build.outputDirectory}/native</argument>
                                     <argument>-C</argument>
                                     <argument>src/native</argument>
                                 </arguments>
