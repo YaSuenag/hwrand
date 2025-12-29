@@ -1,39 +1,50 @@
 package com.yasuenag.hwrand.x86;
 
-import java.lang.foreign.Arena;
+import java.lang.foreign.FunctionDescriptor;
+import java.lang.foreign.Linker;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.security.SecureRandomSpi;
+import java.security.Provider;
+import java.util.Map;
 
-import com.yasuenag.hwrand.x86.internal.FFMHelper;
+import com.yasuenag.ffmasm.AsmBuilder;
+import com.yasuenag.ffmasm.UnsupportedPlatformException;
+
+import com.yasuenag.hwrand.x86.internal.AsmUtil;
 
 
 public class FFMRdSeed extends SecureRandomSpi{
 
-  private static final MethodHandle fillWithRDSEED;
+  private static final MethodHandle rdseed;
 
   static{
-    fillWithRDSEED = FFMHelper.getFillWithRDSEED();
+    try{
+      var desc = FunctionDescriptor.ofVoid(
+          ValueLayout.ADDRESS, // 1st argument (mem)
+          ValueLayout.JAVA_INT // 2nd argument (length)
+      );
+      var builder = new AsmBuilder.AMD64(AsmUtil.getCodeSegment(), desc);
+      AsmUtil.createRDSEEDBody(builder, AsmUtil.ArgRegisters.get(false), 0);
+      rdseed = builder.ret().build(Linker.Option.critical(true));
+    }
+    catch(UnsupportedPlatformException e){
+      throw new RuntimeException(e);
+    }
   }
 
   @Override
   protected byte[] engineGenerateSeed(int numBytes){
-    try{
-      var result = new byte[numBytes];
-      var mem = MemorySegment.ofArray(result);
-      fillWithRDSEED.invokeExact(result, result.length);
-      return result;
-    }
-    catch(Throwable t){
-      throw new RuntimeException(t);
-    }
+    var result = new byte[numBytes];
+    engineNextBytes(result);
+    return result;
   }
 
   @Override
   protected void engineNextBytes(byte[] bytes){
     try{
-      fillWithRDSEED.invokeExact(MemorySegment.ofArray(bytes), bytes.length);
+      rdseed.invokeExact(MemorySegment.ofArray(bytes), bytes.length);
     }
     catch(Throwable t){
       throw new RuntimeException(t);
@@ -43,6 +54,11 @@ public class FFMRdSeed extends SecureRandomSpi{
   @Override
   protected void engineSetSeed(byte[] seed){
     // Do nothing.
+  }
+
+  public Provider.Service getService(Provider provider, Map<String, String> attrs){
+    return new Provider.Service(provider, "SecureRandom", "FFMX86RdSeed",
+                                this.getClass().getName(), null, attrs);
   }
 
 }

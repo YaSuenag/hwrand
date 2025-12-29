@@ -28,6 +28,8 @@ public class Test{
     processRandom("X86RdSeed");
     processRandom("FFMX86RdRand");
     processRandom("FFMX86RdSeed");
+    processRandom("JVMCIX86RdRand");
+    processRandom("JVMCIX86RdSeed");
   }
 
 }

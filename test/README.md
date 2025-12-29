@@ -1,11 +1,11 @@
 HWRand テスト
 ===
 
-X86RdRand、X86RdSeed、FFMX86RdRand、FFMX86RdSeed 経由で取得する `SecureRandom` の値を出力します。
+X86RdRand、X86RdSeed、FFMX86RdRand、FFMX86RdSeed、JVMCIX86RdRand、JVMCIX86RdSeed 経由で取得する `SecureRandom` の値を出力します。
 
 # 必要なもの
 
-* JDK 22
+* JDK 25
 * Maven
 * HWRand
     * **maven installされている必要あり**
@@ -15,5 +15,5 @@ X86RdRand、X86RdSeed、FFMX86RdRand、FFMX86RdSeed 経由で取得する `Secur
 
 ```
 mvn package
-mvn exec:java
+mvn exec:exec
 ```

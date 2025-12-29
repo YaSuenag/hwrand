@@ -4,31 +4,51 @@ import java.security.Provider;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.yasuenag.hwrand.x86.internal.FFMHelper;
+import com.yasuenag.hwrand.x86.internal.AsmUtil;
 import com.yasuenag.hwrand.x86.internal.JNIHelper;
 
 
 public class HWRandX86Provider extends Provider{
 
   private void registerJNI(Map<String, String> attrs){
-    JNIHelper jni = new JNIHelper(this, attrs);
+    try{
+      JNIHelper jni = new JNIHelper(this, attrs);
 
-    if(JNIHelper.isRDRANDAvailable()){
-      putService(jni.getX86RdRand());
+      if(JNIHelper.isRDRANDAvailable()){
+        putService(jni.getX86RdRand());
+      }
+      if(JNIHelper.isRDSEEDAvailable()){
+        putService(jni.getX86RdSeed());
+      }
     }
-    if(JNIHelper.isRDSEEDAvailable()){
-      putService(jni.getX86RdSeed());
+    catch(RuntimeException e){
+      float jdkFeatureNumber = Float.parseFloat(System.getProperty("java.specification.version"));
+      if(jdkFeatureNumber < 22){
+        throw e;
+      }
+      // ignore: maybe on Windows, but HWRand works on FFM at least.
     }
   }
 
   private void registerFFM(Map<String, String> attrs){
-    FFMHelper ffm = new FFMHelper(this, attrs);
-
-    if(FFMHelper.isRDRANDAvailable()){
-      putService(ffm.getX86RdRand());
+    if(AsmUtil.isRDRANDAvailable()){
+      FFMRdRand rdrand = new FFMRdRand();
+      putService(rdrand.getService(this, attrs));
     }
-    if(FFMHelper.isRDSEEDAvailable()){
-      putService(ffm.getX86RdSeed());
+    if(AsmUtil.isRDSEEDAvailable()){
+      FFMRdSeed rdseed = new FFMRdSeed();
+      putService(rdseed.getService(this, attrs));
+    }
+  }
+
+  private void registerJVMCI(Map<String, String> attrs){
+    if(AsmUtil.isRDRANDAvailable()){
+      JVMCIRdRand rdrand = new JVMCIRdRand();
+      putService(rdrand.getService(this, attrs));
+    }
+    if(AsmUtil.isRDSEEDAvailable()){
+      JVMCIRdSeed rdseed = new JVMCIRdSeed();
+      putService(rdseed.getService(this, attrs));
     }
   }
 
@@ -42,20 +62,25 @@ public class HWRandX86Provider extends Provider{
     attrs.put("ThreadSafe", "true");
     attrs.put("ImplementedIn", "Hardware");
 
+    //var jdkFeatureNumber = Runtime.getRuntime().feature();
+    float jdkFeatureNumber = Float.parseFloat(System.getProperty("java.specification.version"));
     try{
       registerJNI(attrs);
     }
     catch(RuntimeException e){
       // We can ignore RuntimeException thrown by JNIHelper::init
-      //  if JDK supports FFM because we can fallback to FFM.
+      // if JDK supports FFM because we can fallback to FFM.
       // Otherwise rethrow exception.
-      if(!FFMHelper.ffmSupported()){
+      if(jdkFeatureNumber < 22){
         throw e;
       }
     }
 
-    if(FFMHelper.ffmSupported()){
+    if(jdkFeatureNumber >= 22){
       registerFFM(attrs);
+    }
+    if(jdkFeatureNumber >= 25){
+      registerJVMCI(attrs);
     }
   }
 
