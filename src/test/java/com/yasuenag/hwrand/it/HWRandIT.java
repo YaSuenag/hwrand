@@ -39,6 +39,13 @@ public class HWRandIT{
     }
   }
 
+  public static class ExceptionTestWithJDK8OnWindows implements Executable{
+    @Override
+    public void execute() throws Throwable{
+      Security.addProvider(new HWRandX86Provider());
+    }
+  }
+
   private static boolean hasRDRAND = false;
   private static boolean hasRDSEED = false;
 
@@ -97,9 +104,8 @@ public class HWRandIT{
 
   @Test
   @EnabledOnOs(OS.WINDOWS)
-  public void testJNIRDRANDOnWindows(){
-    Security.addProvider(new HWRandX86Provider());
-    Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("X86RdRand"));
+  public void testJNIOnWindows(){
+    Assertions.assertThrows(RuntimeException.class, new ExceptionTestWithJDK8OnWindows());
   }
 
   @Test
@@ -121,13 +127,6 @@ public class HWRandIT{
     random.nextBytes(rand2);
 
     Assertions.assertFalse(Arrays.equals(rand1, rand2));
-  }
-
-  @Test
-  @EnabledOnOs(OS.WINDOWS)
-  public void testJNIRDSEEDOnWindows(){
-    Security.addProvider(new HWRandX86Provider());
-    Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("X86RdSeed"));
   }
 
   @Test
@@ -154,6 +153,7 @@ public class HWRandIT{
 
   @Test
   @EnabledForJreRange(max = JRE.JAVA_21)
+  @EnabledOnOs(OS.LINUX)
   public void testDisableFFMRDRAND(){
     Security.addProvider(new HWRandX86Provider());
     Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("FFMX86RdRand"));
@@ -183,6 +183,7 @@ public class HWRandIT{
 
   @Test
   @EnabledForJreRange(max = JRE.JAVA_21)
+  @EnabledOnOs(OS.LINUX)
   public void testDisableFFMRDSEED(){
     Security.addProvider(new HWRandX86Provider());
     Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("FFMX86RdSeed"));
@@ -212,6 +213,7 @@ public class HWRandIT{
 
   @Test
   @EnabledForJreRange(max = JRE.JAVA_24)
+  @EnabledOnOs(OS.LINUX)
   public void testDisableJVMCIRDRAND(){
     Security.addProvider(new HWRandX86Provider());
     Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("JVMCIX86RdRand"));
@@ -241,6 +243,7 @@ public class HWRandIT{
 
   @Test
   @EnabledForJreRange(max = JRE.JAVA_24)
+  @EnabledOnOs(OS.LINUX)
   public void testDisableJVMCIRDSEED(){
     Security.addProvider(new HWRandX86Provider());
     Assertions.assertThrows(NoSuchAlgorithmException.class, new ExceptionTest("JVMCIX86RdSeed"));
