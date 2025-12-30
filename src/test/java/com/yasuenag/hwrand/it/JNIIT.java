@@ -10,7 +10,9 @@ import com.yasuenag.hwrand.x86.HWRandX86Provider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.function.Executable;
 
@@ -66,6 +68,7 @@ public class JNIIT extends TestBase{
 
   @Test
   @EnabledOnOs(OS.WINDOWS)
+  @EnabledForJreRange(max = JRE.JAVA_21)
   public void testOnWindows(){
     Assertions.assertThrows(RuntimeException.class, new ExceptionAtAddProvider());
   }
