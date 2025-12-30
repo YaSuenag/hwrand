@@ -1,11 +1,11 @@
-package com.yasuenag.hwrand.test.random;
+package com.yasuenag.hwrand.example.allrandoms;
 
 import java.security.*;
 
 import com.yasuenag.hwrand.x86.*;
 
 
-public class Test{
+public class Main{
 
   private static void processRandom(String algorithm)
                                             throws NoSuchAlgorithmException{

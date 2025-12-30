@@ -4,16 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.yasuenag</groupId>
-    <artifactId>random</artifactId>
+    <artifactId>all-randoms</artifactId>
     <version>0.3.0</version>
     <packaging>jar</packaging>
 
-    <name>random</name>
+    <name>all-randoms</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <moduleName>com.yasuenag.hwrand.test</moduleName>
-        <mainClass>com.yasuenag.hwrand.test.random.Test</mainClass>
+        <mainClass>com.yasuenag.hwrand.example.allrandoms.Main</mainClass>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
     </properties>
@@ -48,7 +47,7 @@
                     <arguments>
                         <argument>-classpath</argument>
                         <classpath/>
-                        <argument>@${project.basedir}/../jvmci.opts</argument>
+                        <argument>@${project.basedir}/../../jvmci.opts</argument>
                         <argument>${mainClass}</argument>
                     </arguments>
                 </configuration>

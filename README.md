@@ -47,7 +47,7 @@ JAVA_HOME=/path/to/jdk25 mvn package
         * X86RdSeed
         * FFMX86RdSeed
         * JVMCIX86RdSeed
-* 具体的な利用方法については [テストコード](test/src/main/java/com/yasuenag/hwrand/test/random/Test.java) もご覧ください。
+* 具体的な利用方法については [実装例](examples/all-randoms/src/main/java/com/yasuenag/hwrand/example/allrandoms/Main.java) もご覧ください。
 
 # 注意
 
