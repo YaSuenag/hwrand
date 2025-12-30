@@ -244,9 +244,6 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <excludes>
-                                        <exclude>**/DisableJVMCIIT.java</exclude>
-                                    </excludes>
                                     <argLine>@jvmci.opts</argLine>
                                 </configuration>
                             </execution>
@@ -257,9 +254,6 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <includes>
-                                        <include>**/DisableJVMCIIT.java</include>
-                                    </includes>
                                     <argLine>-Dhwrand.disableJVMCI=true</argLine>
                                 </configuration>
                             </execution>
