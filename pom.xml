@@ -236,9 +236,34 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>3.5.4</version>
-                        <configuration>
-                            <argLine>@jvmci.opts</argLine>
-                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>**/DisableJVMCIIT.java</exclude>
+                                    </excludes>
+                                    <argLine>@jvmci.opts</argLine>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>disable-jvmci</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/DisableJVMCIIT.java</include>
+                                    </includes>
+                                    <argLine>-Dhwrand.disableJVMCI=true</argLine>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

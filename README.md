@@ -18,6 +18,8 @@ JDK 22 以降の場合は Foreign Function & Memory API を用いた、RDRAND / 
 
 JDK 25 以降の場合は JVMCI を用いた RDRAND / RDSEED の呼び出しもサポートします。これも Windows でも動作しますが利用時には Java 起動オプションの設定が必要です。 `java` 起動引数に `@jvmci.opts` のように [jvmci.opts](jvmci.opts) またはその記述内容を設定する必要があります。
 
+JVMCI サポートを無効にしたい場合は実行時に `-Dhwrand.disableJVMCI=true` のように `hwrand.disableJVMCI` システムプロパティを `true` に設定します。JVMCI サポートが無効の場合は JVMCI 関連オプションを設定する必要はありません。
+
 > [!TIP]
 > JVMCI の実装には [ffmasm](https://github.com/YaSuenag/ffmasm) 付属の [jvmci-adapter](https://github.com/YaSuenag/ffmasm/packages/2776023) を利用しています。
 

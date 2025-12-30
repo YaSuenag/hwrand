@@ -79,7 +79,7 @@ public class HWRandX86Provider extends Provider{
     if(jdkFeatureNumber >= 22){
       registerFFM(attrs);
     }
-    if(jdkFeatureNumber >= 25){
+    if((jdkFeatureNumber >= 25) && !Boolean.getBoolean("hwrand.disableJVMCI")){
       registerJVMCI(attrs);
     }
   }
