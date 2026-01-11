@@ -2,6 +2,7 @@
 
 # void fill_with_rdrand(unsigned char data[], int len);
 .global fill_with_rdrand
+.hidden fill_with_rdrand
 .type   fill_with_rdrand, @function
 fill_with_rdrand:
 .cfi_startproc
@@ -43,6 +44,7 @@ fill_with_rdrand:
 
 # void fill_with_rdseed(unsigned char data[], int len);
 .global fill_with_rdseed
+.hidden fill_with_rdseed
 .type   fill_with_rdseed, @function
 fill_with_rdseed:
 .cfi_startproc
