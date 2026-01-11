@@ -4,6 +4,7 @@
 .global fill_with_rdrand
 .type   fill_with_rdrand, @function
 fill_with_rdrand:
+.cfi_startproc
   push %rbp
   movq %rsp, %rbp
 
@@ -36,12 +37,15 @@ fill_with_rdrand:
 
   leave
   ret
+.cfi_endproc
+.size fill_with_rdrand, .-fill_with_rdrand
 
 
 # void fill_with_rdseed(unsigned char data[], int len);
 .global fill_with_rdseed
 .type   fill_with_rdseed, @function
 fill_with_rdseed:
+.cfi_startproc
   push %rbp
   movq %rsp, %rbp
 
@@ -74,4 +78,5 @@ fill_with_rdseed:
 
   leave
   ret
-
+.cfi_endproc
+.size fill_with_rdseed, .-fill_with_rdseed
